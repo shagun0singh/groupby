@@ -40,38 +40,3 @@ exports.protect = async (req, res, next) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
-exports.restrictToHost = (req, res, next) => {
-  if (req.user.role !== 'host') {
-    return res.status(403).json({ message: 'Access denied. Host role required.' });
-  }
-  next();
-};
-
-exports.checkOwnership = (model) => {
-  return async (req, res, next) => {
-    try {
-      const resource = await model.findById(req.params.id);
-      
-      if (!resource) {
-        return res.status(404).json({ message: 'Resource not found' });
-      }
-
-      if (resource.host) {
-        if (resource.host.toString() !== req.user._id.toString()) {
-          return res.status(403).json({ message: 'Access denied. You do not own this resource.' });
-        }
-      } 
-      else if (resource._id) {
-        if (resource._id.toString() !== req.user._id.toString()) {
-          return res.status(403).json({ message: 'Access denied. You can only update your own profile.' });
-        }
-      }
-
-      next();
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error: error.message });
-    }
-  };
-};
-

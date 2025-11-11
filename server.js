@@ -5,10 +5,6 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const requiredEnvVars = ['JWT_SECRET'];
-const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
-
-
 const app = express();
 
 app.use(cors());
@@ -17,12 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const mongoURI = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/groupby';
 
-
-
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(mongoURI)
 .then(() => {
   console.log(' MongDB connected successfully');
 })
@@ -31,9 +22,6 @@ mongoose.connect(mongoURI, {
 });
 
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/users', require('./routes/users'));
-app.use('/api/events', require('./routes/events'));
-app.use('/api/recommendations', require('./routes/recommendations'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'GroupBy API is running' });
