@@ -1,309 +1,357 @@
-# GroupBy Backend API
+# GroupBy Authentication Backend
 
-A comprehensive Node.js backend API for **GroupBy** - A Curated Event & Gathering Platform that enables users to host and join selective, interest-based local events with an approval system.
+A simple and secure Node.js backend API for user authentication. This project provides user registration and login functionality with JWT (JSON Web Token) authentication.
 
-## 📋 Table of Contents
+## 📚 Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [System Architecture](#system-architecture)
-- [Tech Stack](#tech-stack)
+- [What is This Project?](#what-is-this-project)
+- [What Does It Do?](#what-does-it-do)
+- [Technologies Used](#technologies-used)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
-- [API Documentation](#api-documentation)
-- [Database Models](#database-models)
-- [Authentication Flow](#authentication-flow)
-- [How It Works](#how-it-works)
-- [Testing](#testing)
+- [API Endpoints](#api-endpoints)
+- [How Authentication Works](#how-authentication-works)
+- [Environment Variables](#environment-variables)
 - [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
 
-## 🎯 Overview
+## What is This Project?
 
-GroupBy is designed to bridge the gap between large-scale event platforms and small community gatherings. Unlike platforms like BookMyShow that focus on ticketed events, GroupBy allows individuals and small communities to:
+This is a **backend API server** built with Node.js and Express. Think of it as the "brain" of an application that handles user authentication - allowing users to sign up (create accounts) and log in (access their accounts).
 
-- **Host selective events** with approval-based participation
-- **Discover curated events** based on interests, age, and location
-- **Build meaningful connections** through interest-based gatherings
-- **Ensure safety** through host-controlled participant approval
+### Key Features:
+- ✅ User registration (signup)
+- ✅ User login
+- ✅ Secure password storage (hashed passwords)
+- ✅ JWT token-based authentication
+- ✅ Role-based system (user/host roles)
+- ✅ Input validation
+- ✅ MongoDB database integration
 
-### Problem Statement
+## What Does It Do?
 
-Existing event discovery apps mainly focus on large-scale, ticketed events. They don't provide a simple way for individuals or small communities to host their own gatherings (workshops, meetups, local interest-based events). GroupBy solves this by providing:
+1. **User Registration**: Allows new users to create an account with first name, last name, phone number, email, and password
+2. **User Login**: Allows existing users to log in with email and password
+3. **Token Generation**: Creates secure JWT tokens for authenticated users
+4. **Password Security**: Automatically hashes passwords before storing them in the database
+5. **Data Validation**: Validates user input to ensure data quality
 
-- Easy event creation for hosts
-- Selective participant approval system
-- AI-powered event recommendations
-- Privacy controls (only approved participants see full details)
+## Technologies Used
 
-## ✨ Features
+### Core Technologies:
 
-### Core Features
+1. **Node.js** - JavaScript runtime environment that allows running JavaScript on the server
+2. **Express.js** - Web framework for Node.js that simplifies building APIs
+3. **MongoDB** - NoSQL database to store user information
+4. **Mongoose** - Library that makes it easy to work with MongoDB in Node.js
 
-1. **Authentication & Authorization**
-   - JWT-based authentication
-   - Role-based access control (User/Host)
-   - Secure password hashing with bcrypt
+### Security & Validation:
 
-2. **User Management**
-   - User profiles with bio, age, interests, location
-   - Profile picture support
-   - Profile updates
+5. **bcryptjs** - Library for hashing passwords (converts passwords into unreadable strings)
+6. **jsonwebtoken (JWT)** - Creates secure tokens for user authentication
+7. **express-validator** - Validates user input (checks if email is valid, password length, etc.)
 
-3. **Event Management**
-   - Create, read, update, delete events
-   - Event categories and tags
-   - Location-based events
-   - Age and gender filters
-   - Event banners
+### Other Tools:
 
-4. **Application System**
-   - Users apply to join events
-   - Hosts approve/reject applications
-   - Application messages
+8. **cors** - Allows the API to be accessed from different domains (like a React frontend)
+9. **dotenv** - Manages environment variables (like database URLs and secrets)
+10. **nodemon** - Automatically restarts the server when code changes (development only)
 
-5. **Smart Recommendations**
-   - AI-powered event recommendations
-   - Based on interests, age, location
-   - Falls back to rule-based if AI unavailable
+## Project Structure
 
-6. **Search & Discovery**
-   - Full-text search (title, description, tags)
-   - Filter by category, location, date, age
-   - Sort by date, popularity, creation time
-   - Pagination support
-
-7. **Privacy & Security**
-   - Only approved participants see full event details
-   - Host-only event management
-   - JWT token-based authentication
-   - Input validation and sanitization
-
-## 🏗️ System Architecture
-
-```
-┌─────────────┐
-│   Client    │ (React Frontend)
-│  (Frontend) │
-└──────┬──────┘
-       │ HTTP/REST API
-       │
-┌──────▼─────────────────────────────────┐
-│         Express.js Server              │
-│  ┌──────────────────────────────────┐ │
-│  │   Authentication Middleware      │ │
-│  │   (JWT Verification)             │ │
-│  └──────────────────────────────────┘ │
-│  ┌──────────────────────────────────┐ │
-│  │   Route Handlers                 │ │
-│  │   - /api/auth                    │ │
-│  │   - /api/users                   │ │
-│  │   - /api/events                  │ │
-│  │   - /api/recommendations         │ │
-│  └──────────────────────────────────┘ │
-│  ┌──────────────────────────────────┐ │
-│  │   Business Logic                │ │
-│  │   - Recommendation Service       │ │
-│  │   - Validation                  │ │
-│  └──────────────────────────────────┘ │
-└──────┬─────────────────────────────────┘
-       │
-       │ Mongoose ODM
-       │
-┌──────▼─────────────────────────────────┐
-│         MongoDB Database               │
-│  ┌──────────┐  ┌──────────┐          │
-│  │  Users   │  │  Events  │          │
-│  └──────────┘  └──────────┘          │
-│  ┌──────────┐                        │
-│  │Applications│                      │
-│  └──────────┘                        │
-└────────────────────────────────────────┘
-```
-
-## 🛠️ Tech Stack
-
-### Backend
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MongoDB with Mongoose ODM
-- **Authentication:** JWT (jsonwebtoken)
-- **Password Hashing:** bcryptjs
-- **Validation:** express-validator
-- **CORS:** cors middleware
-
-### Optional AI Integration
-- **OpenAI API:** For enhanced recommendations
-- **Google Gemini API:** Alternative AI recommendation engine
-
-### Development Tools
-- **nodemon:** Auto-reload during development
-- **dotenv:** Environment variable management
-
-## 📁 Project Structure
+Let's understand how the project is organized:
 
 ```
 groupby/
-├── models/                    # Database models
-│   ├── User.js                # User schema (authentication, profile)
-│   ├── Event.js               # Event schema (host, details, filters)
-│   └── Application.js         # Application schema (user → event)
 │
-├── routes/                     # API route handlers
-│   ├── auth.js                # Authentication routes (signup, login)
-│   ├── users.js               # User profile routes (GET, PUT)
-│   ├── events.js              # Event routes (CRUD, applications)
-│   └── recommendations.js     # AI recommendations route
+├── backend/
+│   ├── server.js               # Main entry point - starts the server
+│   ├── package.json            # Backend configuration and dependencies
+│   ├── nodemon.json            # Dev server config (reload on changes)
+│   ├── models/                 # Database models (data structure definitions)
+│   │   └── User.js             # User model - defines user data structure
+│   ├── routes/                 # API routes (endpoints)
+│   │   └── auth.js             # Authentication routes (signup, login)
+│   ├── middleware/             # Middleware functions (run between request and response)
+│   │   └── auth.js             # Authentication middleware (protects routes)
+│   ├── utils/                  # Utility functions (helper functions)
+│   │   └── generateToken.js    # Function to generate JWT tokens
+│   └── node_modules/           # Installed dependencies (auto-generated)
 │
-├── middleware/                 # Custom middleware
-│   └── auth.js                # JWT authentication & authorization
-│
-├── services/                   # Business logic
-│   └── recommendationService.js  # Recommendation algorithms
-│
-├── utils/                      # Utility functions
-│   └── generateToken.js       # JWT token generation
-│
-├── server.js                   # Main server file
-├── package.json                # Dependencies & scripts
-├── nodemon.json                # Nodemon configuration
-├── .env                        # Environment variables (not in git)
-├── env.example                 # Environment variables template
-├── test-api.sh                 # Automated API tests
-├── test-auth.sh                # Authentication tests
-├── check-setup.js              # Setup validation script
-└── README.md                   # This file
+├── frontend/ (optional)        # Placeholder for any frontend clients
+├── README.md                   # You're reading it right now
+└── .gitignore                  # Files/directories ignored by git
 ```
 
-## 🚀 Getting Started
+### Detailed File Explanations:
+
+#### 1. `backend/server.js` - The Main Server File
+- **Purpose**: This is the entry point of your application
+- **What it does**:
+  - Creates an Express app
+  - Connects to MongoDB database
+  - Sets up middleware (CORS, JSON parser)
+  - Defines API routes
+  - Starts the server on a port (default: 5000)
+  - Handles errors
+
+#### 2. `backend/models/User.js` - User Data Model
+- **Purpose**: Defines the structure of user data in the database
+- **What it contains**:
+  - User schema (first name, last name, email, phone, password, role, bio, age, interests, etc.)
+  - Automatic full-name generation from first/last name fields
+  - Password hashing (before saving)
+  - Password comparison method (for login)
+  - Automatic password removal from JSON responses (security)
+
+#### 3. `backend/routes/auth.js` - Authentication Routes
+- **Purpose**: Handles authentication-related API endpoints
+- **Endpoints**:
+  - `POST /api/auth/signup` - Register a new user
+  - `POST /api/auth/login` - Login an existing user
+- **What it does**:
+  - Validates user input
+  - Checks if user already exists (signup)
+  - Hashes passwords
+  - Generates JWT tokens
+  - Returns user data and token
+
+#### 4. `backend/middleware/auth.js` - Authentication Middleware
+- **Purpose**: Protects routes that require authentication
+- **What it does**:
+  - Checks if user has a valid JWT token
+  - Verifies the token
+  - Attaches user information to the request
+  - Blocks unauthorized access
+
+#### 5. `backend/utils/generateToken.js` - Token Generator
+- **Purpose**: Creates JWT tokens for authenticated users
+- **What it does**:
+  - Takes user ID as input
+  - Creates a secure token using JWT_SECRET
+  - Sets token expiration (default: 7 days)
+
+#### 6. `backend/package.json` - Project Configuration
+- **Purpose**: Defines project metadata and dependencies
+- **Contains**:
+  - Project name, version, description
+  - List of dependencies (packages needed)
+  - Scripts (commands to run the project)
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- MongoDB (local installation or MongoDB Atlas account)
-- npm or yarn
+Before you start, make sure you have installed:
+- **Node.js** (version 14 or higher) - [Download here](https://nodejs.org/)
+- **npm** (comes with Node.js) - Package manager
+- **MongoDB** - Database (you can use MongoDB Atlas for free cloud database)
 
-### Installation
+### Step 1: Clone or Download the Project
 
-1. **Clone the repository:**
+If you have the project files, navigate to the project directory:
+
 ```bash
-git clone <repository-url>
 cd groupby
+cd backend
 ```
 
-2. **Install dependencies:**
+### Step 2: Install Dependencies
+
+Install all required packages (run this from inside the `backend` directory):
+
 ```bash
 npm install
 ```
 
-3. **Set up environment variables:**
-```bash
-# Copy the example file
-cp env.example .env
+This reads `package.json` and installs all dependencies listed there.
 
-# Edit .env with your configuration
+### Step 3: Set Up Environment Variables
+
+Create a `.env` file in the backend directory:
+
+```bash
+touch .env
 ```
 
-4. **Configure environment variables:**
-
-Create a `.env` file with the following:
+Add the following variables to `.env`:
 
 ```env
-# Server Configuration
-PORT=5001
-NODE_ENV=development
+# JWT Secret Key (use a random long string)
+JWT_SECRET=your_super_secret_key_here_make_it_long_and_random
 
-# Database Configuration
+# MongoDB Connection String
+# For local MongoDB:
 MONGO_URI=mongodb://localhost:27017/groupby
-# Or for MongoDB Atlas:
-# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/groupby?retryWrites=true&w=majority
 
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-min-32-characters-long
+# For MongoDB Atlas (cloud):
+# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/groupby
+
+# Optional: JWT Token Expiration (default is 7d)
 JWT_EXPIRE=7d
 
-# Optional: AI API Keys (for enhanced recommendations)
-OPENAI_API_KEY=your-openai-api-key-optional
-GEMINI_API_KEY=your-gemini-api-key-optional
+# Optional: Server Port (default is 5000)
+PORT=5000
 ```
 
-5. **Start MongoDB:**
-```bash
-# Local MongoDB
-mongod
+**Important**: 
+- Replace `your_super_secret_key_here_make_it_long_and_random` with a random string (at least 32 characters)
+- Replace MongoDB connection string with your actual database URL
+- Never commit `.env` file to git (it's already in `.gitignore`)
 
-# Or use MongoDB Atlas (cloud) - no local setup needed
+### Step 4: Start MongoDB
+
+**Option A: Local MongoDB**
+```bash
+# On macOS with Homebrew
+brew services start mongodb-community
+
+# On Linux
+sudo systemctl start mongod
+
+# On Windows
+# Start MongoDB from Services or run mongod.exe
 ```
 
-6. **Verify setup:**
-```bash
-npm run check
-```
+**Option B: MongoDB Atlas (Cloud - Recommended for beginners)**
+1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a free account
+3. Create a free cluster
+4. Get your connection string
+5. Add it to `.env` as `MONGO_URI`
 
-7. **Start the server:**
+### Step 5: Run the Server
+
+**Development mode** (auto-restarts on code changes, run from `backend/`):
 ```bash
-# Development mode (with auto-reload)
 npm run dev
+```
 
-# Production mode
+**Production mode** (also run from `backend/`):
+```bash
 npm start
 ```
 
-The server will start on `http://localhost:5001` (or your configured PORT).
-
-## 📚 API Documentation
-
-### Base URL
+You should see:
 ```
-http://localhost:5001/api
+MongoDB connected successfully
+Server is running on port 5000
 ```
 
-### Authentication
+### Step 6: Test the Server
 
-All protected endpoints require a JWT token in the Authorization header:
+Open your browser or use curl/Postman to test:
+
+```bash
+# Health check
+curl http://localhost:5000/health
 ```
-Authorization: Bearer <your-jwt-token>
-```
 
-### Endpoints Overview
-
-| Method | Endpoint | Description | Auth Required | Role |
-|--------|----------|-------------|---------------|------|
-| POST | `/api/auth/signup` | Register new user | No | - |
-| POST | `/api/auth/login` | Authenticate user | No | - |
-| GET | `/api/users/:id` | Get user profile | Yes | Any |
-| PUT | `/api/users/:id` | Update user profile | Yes | Owner |
-| GET | `/api/events` | List events (with filters) | Yes | Any |
-| POST | `/api/events` | Create event | Yes | Host |
-| GET | `/api/events/:id` | Get event details | Yes | Any |
-| PUT | `/api/events/:id` | Update event | Yes | Host (Owner) |
-| DELETE | `/api/events/:id` | Delete event | Yes | Host (Owner) |
-| POST | `/api/events/:id/apply` | Apply to event | Yes | User |
-| GET | `/api/events/:id/applications` | Get applications | Yes | Host (Owner) |
-| PUT | `/api/events/:id/applications` | Approve/reject application | Yes | Host (Owner) |
-| GET | `/api/recommendations` | Get recommendations | Yes | Any |
-
-### Detailed Endpoint Documentation
-
-#### 1. Authentication
-
-**POST `/api/auth/signup`**
-- Register a new user
-- Returns JWT token and user info
-- Request body:
+You should get:
 ```json
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123",
-  "role": "user"  // optional: "user" or "host"
+  "status": "OK",
+  "message": "GroupBy API is running"
 }
 ```
 
-**POST `/api/auth/login`**
-- Authenticate existing user
-- Returns JWT token and user info
-- Request body:
+## API Endpoints
+
+### Base URL
+```
+http://localhost:5000
+```
+
+### 1. Health Check
+
+**GET** `/health`
+
+Check if the server is running.
+
+**Response:**
+```json
+{
+  "status": "OK",
+  "message": "GroupBy API is running"
+}
+```
+
+### 2. User Registration (Signup)
+
+**POST** `/api/auth/signup`
+
+Register a new user.
+
+**Request Body:**
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "phone": "+15551234567",
+  "password": "password123",
+  "confirmPassword": "password123",
+  "role": "user"
+}
+```
+
+**Fields:**
+- `firstName` (required) - User's first name
+- `lastName` (required) - User's last name
+- `email` (required) - User's email address (must be valid email)
+- `phone` (required) - Phone number including country code (`+` optional)
+- `password` (required) - User's password (minimum 8 characters)
+- `confirmPassword` (required) - Must match `password`
+- `role` (optional) - User role: "user" or "host" (default: "user")
+
+**Success Response (201):**
+```json
+{
+  "message": "User registered successfully",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "phone": "+15551234567",
+    "role": "user"
+  }
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "errors": [
+    {
+      "msg": "Please provide a valid email",
+      "param": "email"
+    }
+  ]
+}
+```
+
+**Example using curl:**
+```bash
+curl -X POST http://localhost:5000/api/auth/signup \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "phone": "+15551234567",
+    "password": "password123",
+    "confirmPassword": "password123"
+  }'
+```
+
+### 3. User Login
+
+**POST** `/api/auth/login`
+
+Login an existing user.
+
+**Request Body:**
 ```json
 {
   "email": "john@example.com",
@@ -311,517 +359,156 @@ Authorization: Bearer <your-jwt-token>
 }
 ```
 
-#### 2. Users
+**Fields:**
+- `email` (required) - User's email address
+- `password` (required) - User's password
 
-**GET `/api/users/:id`**
-- Get user profile by ID
-- Returns user data (without password)
-
-**PUT `/api/users/:id`**
-- Update own profile
-- Can update: name, email, bio, age, interests, profilePic, location
-
-#### 3. Events
-
-**GET `/api/events`**
-- List all published events with pagination
-- Query parameters:
-  - `search`: Search in title, description, tags
-  - `category`: Filter by category
-  - `city`, `country`: Filter by location
-  - `dateFrom`, `dateTo`: Filter by date range
-  - `minAge`, `maxAge`: Filter by age range
-  - `sortBy`: `date`, `popularity`, `created`
-  - `sortOrder`: `asc`, `desc`
-  - `page`: Page number (default: 1)
-  - `limit`: Items per page (default: 10)
-
-**POST `/api/events`**
-- Create new event (Host only)
-- Request body includes: title, description, category, tags, date, time, location, maxParticipants, filters
-
-**GET `/api/events/:id`**
-- Get event details
-- Limited details for non-approved users
-- Full details for approved participants or host
-
-**PUT `/api/events/:id`**
-- Update event (Host, Owner only)
-
-**DELETE `/api/events/:id`**
-- Delete event (Host, Owner only)
-
-#### 4. Applications
-
-**POST `/api/events/:id/apply`**
-- Apply to join an event
-- Optional message field
-
-**GET `/api/events/:id/applications`**
-- Get all applications for an event (Host, Owner only)
-
-**PUT `/api/events/:id/applications`**
-- Approve or reject application
-- Request body:
+**Success Response (200):**
 ```json
 {
-  "applicationId": "application-id",
-  "status": "approved"  // or "rejected"
-}
-```
-
-#### 5. Recommendations
-
-**GET `/api/recommendations`**
-- Get AI-powered event recommendations
-- Query parameter: `limit` (default: 10)
-- Based on user interests, age, location, past applications
-
-## 🗄️ Database Models
-
-### User Model
-
-```javascript
-{
-  name: String (required),
-  email: String (required, unique),
-  password: String (required, hashed),
-  role: String (enum: 'user', 'host', default: 'user'),
-  bio: String (max 500 chars),
-  age: Number (13-120),
-  interests: [String],
-  profilePic: String (URL),
-  location: {
-    city: String,
-    state: String,
-    country: String
-  },
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-**Features:**
-- Password automatically hashed before saving
-- Password excluded from JSON responses
-- Email validation and uniqueness
-
-### Event Model
-
-```javascript
-{
-  host: ObjectId (ref: User, required),
-  title: String (required, max 200 chars),
-  description: String (required, max 2000 chars),
-  category: String (required),
-  tags: [String],
-  date: Date (required),
-  time: String (required),
-  location: {
-    address: String (required),
-    city: String (required),
-    state: String,
-    country: String (required),
-    coordinates: { lat: Number, lng: Number }
-  },
-  maxParticipants: Number (required, min: 1),
-  banner: String (URL),
-  filters: {
-    minAge: Number (min: 13),
-    maxAge: Number (max: 120),
-    gender: String (enum: 'all', 'male', 'female', 'other')
-  },
-  status: String (enum: 'draft', 'published', 'cancelled', 'completed', default: 'published'),
-  approvedParticipants: [ObjectId] (ref: User),
-  applications: [ObjectId] (ref: Application),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-**Indexes:**
-- Text index on title, description, tags, category (for search)
-- Index on date (for sorting)
-- Index on location.city (for filtering)
-- Index on status (for filtering)
-
-### Application Model
-
-```javascript
-{
-  event: ObjectId (ref: Event, required),
-  applicant: ObjectId (ref: User, required),
-  status: String (enum: 'pending', 'approved', 'rejected', default: 'pending'),
-  message: String (max 500 chars),
-  appliedAt: Date (default: now),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-**Constraints:**
-- Unique index on (event, applicant) - one application per user per event
-
-## 🔐 Authentication Flow
-
-### Signup Flow
-
-```
-1. Client sends: { name, email, password, role }
-   ↓
-2. Server validates input (express-validator)
-   ↓
-3. Check if email already exists
-   ↓
-4. Hash password (bcrypt)
-   ↓
-5. Create user in database
-   ↓
-6. Generate JWT token
-   ↓
-7. Return: { token, user: { id, name, email, role } }
-```
-
-### Login Flow
-
-```
-1. Client sends: { email, password }
-   ↓
-2. Server validates input
-   ↓
-3. Find user by email
-   ↓
-4. Compare password with hashed password (bcrypt)
-   ↓
-5. Generate JWT token
-   ↓
-6. Return: { token, user: { id, name, email, role } }
-```
-
-### Protected Route Flow
-
-```
-1. Client sends request with: Authorization: Bearer <token>
-   ↓
-2. Middleware extracts token from header
-   ↓
-3. Verify JWT token (jsonwebtoken)
-   ↓
-4. Extract user ID from token
-   ↓
-5. Fetch user from database
-   ↓
-6. Attach user to request (req.user)
-   ↓
-7. Route handler processes request
-   ↓
-8. Return response
-```
-
-### Role-Based Access Control
-
-- **User Role:** Can view events, apply to events, update own profile
-- **Host Role:** All user permissions + create/edit/delete own events, manage applications
-
-## 🔄 How It Works
-
-### Event Creation & Application Flow
-
-```
-1. Host creates event
-   POST /api/events
-   → Event saved with status: 'published'
-   → Host automatically added to approvedParticipants
-
-2. User discovers event
-   GET /api/events (with search/filters)
-   → Sees limited event details
-
-3. User applies to event
-   POST /api/events/:id/apply
-   → Application created with status: 'pending'
-   → Application added to event.applications array
-
-4. Host reviews applications
-   GET /api/events/:id/applications
-   → Sees all pending applications with user details
-
-5. Host approves/rejects
-   PUT /api/events/:id/applications
-   → Application status updated
-   → If approved: User added to event.approvedParticipants
-   → User can now see full event details
-```
-
-### Recommendation System
-
-The recommendation system uses a multi-layered approach:
-
-1. **Rule-Based Scoring:**
-   - Interest matching (tags, category)
-   - Location matching (city, country)
-   - Age compatibility
-   - Event recency (closer events score higher)
-   - Popularity (participant count)
-
-2. **AI Enhancement (Optional):**
-   - If OpenAI or Gemini API keys are provided
-   - Sends user profile + candidate events to AI
-   - AI ranks events by relevance
-   - Falls back to rule-based if AI unavailable
-
-3. **Exclusion:**
-   - Excludes events user already applied to
-   - Excludes events user is already approved for
-   - Only shows future events
-
-### Privacy Model
-
-- **Public Information:** Event title, category, date, location (city), max participants
-- **Limited Details:** Description, tags, filters (shown to all authenticated users)
-- **Full Details:** Approved participants list, application count (only for approved participants or host)
-- **Host-Only:** Application details, applicant information
-
-## 🧪 Testing
-
-### Automated Tests
-
-**Test all APIs:**
-```bash
-./test-api.sh
-```
-
-**Test authentication only:**
-```bash
-./test-auth.sh
-```
-
-**Check setup:**
-```bash
-npm run check
-```
-
-### Manual Testing with curl
-
-See `curl-examples.md` for detailed curl commands.
-
-**Quick test:**
-```bash
-# Health check
-curl http://localhost:5001/health
-
-# Signup
-curl -X POST http://localhost:5001/api/auth/signup \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test","email":"test@test.com","password":"pass123","role":"user"}'
-
-# Login
-curl -X POST http://localhost:5001/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","password":"pass123"}'
-```
-
-## 🚀 Deployment
-
-### Environment Setup
-
-1. **Set production environment variables:**
-```env
-NODE_ENV=production
-PORT=5001
-MONGO_URI=your-production-mongodb-uri
-JWT_SECRET=strong-random-secret-min-32-chars
-```
-
-2. **Install dependencies:**
-```bash
-npm install --production
-```
-
-3. **Start server:**
-```bash
-npm start
-```
-
-### Deployment Platforms
-
-**Backend:**
-- **Render:** Connect GitHub repo, set environment variables
-- **Railway:** Similar to Render
-- **Heroku:** Use Procfile: `web: node server.js`
-- **DigitalOcean App Platform:** Connect repo, configure
-
-**Database:**
-- **MongoDB Atlas:** Recommended for production
-- **MongoDB on Render/Railway:** Managed MongoDB
-
-### Environment Variables for Production
-
-```env
-NODE_ENV=production
-PORT=5001
-MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/groupby?retryWrites=true&w=majority
-JWT_SECRET=generate-strong-random-secret-here-min-32-characters
-JWT_EXPIRE=7d
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**1. MongoDB Connection Error**
-```
-Error: MongoDB connection error
-```
-**Solution:**
-- Check MongoDB is running (local) or accessible (Atlas)
-- Verify MONGO_URI in .env
-- For Atlas: Check IP whitelist and credentials
-- Test connection: `mongosh "your-connection-string"`
-
-**2. Port Already in Use**
-```
-Error: listen EADDRINUSE: address already in use :::5001
-```
-**Solution:**
-- Change PORT in .env
-- Or kill process: `lsof -ti:5001 | xargs kill -9`
-
-**3. JWT_SECRET Missing**
-```
-Error: Missing required environment variables: JWT_SECRET
-```
-**Solution:**
-- Add JWT_SECRET to .env file
-- Generate strong secret: `openssl rand -base64 32`
-
-**4. Authentication Fails**
-```
-Error: Not authorized, token failed
-```
-**Solution:**
-- Check JWT_SECRET matches between signup/login
-- Verify token is sent in Authorization header
-- Check token hasn't expired
-
-**5. Host Role Required Error**
-```
-Error: Access denied. Host role required.
-```
-**Solution:**
-- User must signup with `"role": "host"`
-- Or update user role in database
-
-### Debug Mode
-
-Enable detailed error messages:
-```env
-NODE_ENV=development
-```
-
-## 📝 API Response Formats
-
-### Success Response
-```json
-{
-  "message": "Operation successful",
-  "data": { ... }
-}
-```
-
-### Error Response
-```json
-{
-  "message": "Error message",
-  "errors": [
-    {
-      "type": "field",
-      "msg": "Validation error",
-      "path": "email",
-      "location": "body"
-    }
-  ]
-}
-```
-
-### Pagination Response
-```json
-{
-  "events": [...],
-  "pagination": {
-    "currentPage": 1,
-    "totalPages": 5,
-    "totalEvents": 50,
-    "limit": 10
+  "message": "Login successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com",
+    "phone": "+15551234567",
+    "role": "user"
   }
 }
 ```
 
-## 🔒 Security Features
-
-1. **Password Security:**
-   - Passwords hashed with bcrypt (12 rounds)
-   - Never returned in API responses
-
-2. **JWT Security:**
-   - Tokens expire after 7 days (configurable)
-   - Secret key required (min 32 characters recommended)
-   - Token verification on every protected route
-
-3. **Input Validation:**
-   - All inputs validated with express-validator
-   - Email format validation
-   - Password length requirements
-   - SQL injection prevention (MongoDB)
-
-4. **Authorization:**
-   - Role-based access control
-   - Resource ownership verification
-   - Host-only endpoints protected
-
-5. **CORS:**
-   - Configured for cross-origin requests
-   - Adjust in server.js for production
-
-## 📊 Database Relationships
-
-```
-User (1) ──< (Many) Event (host)
-User (1) ──< (Many) Application (applicant)
-Event (1) ──< (Many) Application (event)
-Event (Many) ──< (Many) User (approvedParticipants)
+**Error Response (401):**
+```json
+{
+  "message": "Invalid credentials"
+}
 ```
 
-## 🎯 Future Enhancements
+**Example using curl:**
+```bash
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john@example.com",
+    "password": "password123"
+  }'
+```
 
-- [ ] Email notifications for applications
-- [ ] Event reminders
-- [ ] User reviews and ratings
-- [ ] Event chat/messaging
-- [ ] Payment integration
-- [ ] Image upload to cloud storage
-- [ ] Advanced analytics
-- [ ] Mobile app API support
+## How Authentication Works
 
-## 📄 License
+### 1. User Registration Flow
 
-ISC
+```
+1. User sends signup request with first name, last name, phone number, email, password, confirm password
+   ↓
+2. Server validates input (email format, password length)
+   ↓
+3. Server checks if email already exists
+   ↓
+4. Server hashes the password (converts to unreadable string)
+   ↓
+5. Server saves user to database
+   ↓
+6. Server generates JWT token
+   ↓
+7. Server returns token and user info to client
+```
 
-## 🤝 Contributing
+### 2. User Login Flow
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+```
+1. User sends login request with email and password
+   ↓
+2. Server validates input
+   ↓
+3. Server finds user by email in database
+   ↓
+4. Server compares provided password with hashed password
+   ↓
+5. If passwords match, server generates JWT token
+   ↓
+6. Server returns token and user info to client
+```
 
-## 📧 Support
+### 3. JWT Token Usage
 
-For issues and questions:
-- Check the troubleshooting section
-- Review API documentation
-- Check server logs for errors
+After login/signup, the client receives a JWT token. This token should be stored (usually in localStorage or cookies) and sent with every authenticated request:
 
----
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
 
-**Built with ❤️ for community-driven events**
+The server verifies this token to identify the user.
+
+### 4. Password Security
+
+- Passwords are **never** stored in plain text
+- Passwords are **hashed** using bcrypt before saving to database
+- When user logs in, the provided password is hashed and compared with stored hash
+- Original password cannot be recovered from hash (one-way encryption)
+
+## Environment Variables
+
+### Required Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `JWT_SECRET` | Secret key for signing JWT tokens | `my_super_secret_key_12345` |
+| `MONGO_URI` | MongoDB connection string | `mongodb://localhost:27017/groupby` |
+
+### Optional Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port number | `5000` |
+| `JWT_EXPIRE` | JWT token expiration time | `7d` |
+| `NODE_ENV` | Environment (development/production) | `development` |
+
+### How to Generate JWT_SECRET
+
+You can generate a random secret key using Node.js:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Or use an online generator: [randomkeygen.com](https://randomkeygen.com/)
+
+## Deployment
+
+### Deploying to Render
+
+1. **Push your code to GitHub**
+
+2. **Create a new Web Service on Render**
+   - Go to [render.com](https://render.com)
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository
+
+3. **Configure the service**
+   - **Name**: groupby-backend (or any name)
+   - **Environment**: Node
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+
+4. **Add Environment Variables**
+   - Go to "Environment" tab
+   - Add `JWT_SECRET` (generate a random string)
+   - Add `MONGO_URI` (your MongoDB connection string)
+   - Add `PORT` (Render will set this automatically, but you can set it)
+
+5. **Deploy**
+   - Click "Create Web Service"
+   - Wait for deployment to complete
+   - Your API will be available at `https://your-app-name.onrender.com`
+
+### Deploying to Heroku
+
+1. **Install Heroku CLI**: [heroku.com/cli](https://devcenter.heroku.com/articles/heroku-cli)
+
+2. **Login to Heroku**:
+   ```bash
+   heroku login
+   ```
