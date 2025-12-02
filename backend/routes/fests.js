@@ -1,7 +1,7 @@
-import express from "express";
-import Fest from "../models/Fest.js";
-import Registration from "../models/Registration.js";
-import { authenticate } from "../middleware/auth.js";
+const express = require('express');
+const Fest = require('../models/Fest');
+const Registration = require('../models/Registration');
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 

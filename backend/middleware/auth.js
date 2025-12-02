@@ -1,45 +1,47 @@
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const JWT_SECRET = process.env.SECRET_KEY || "your-secret-key-change-this-in-production";
+const JWT_SECRET = process.env.SECRET_KEY || 'your-secret-key-change-this-in-production';
 
-export const authenticate = async (req, res, next) => {
+async function authenticate(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
-    
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
-        detail: "Invalid authentication credentials"
+        detail: 'Invalid authentication credentials'
       });
     }
-    
+
     const token = authHeader.substring(7);
-    
+
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
-      const user = await User.findById(decoded.sub);
-      
+      const user = await User.findById(decoded.sub || decoded.id);
+
       if (!user) {
         return res.status(401).json({
-          detail: "User not found"
+          detail: 'User not found'
         });
       }
-      
-      if (!user.isActive) {
+
+      if (user.isActive === false) {
         return res.status(403).json({
-          detail: "Inactive user"
+          detail: 'Inactive user'
         });
       }
-      
+
       req.user = user;
       next();
     } catch (error) {
       return res.status(401).json({
-        detail: "Invalid authentication credentials"
+        detail: 'Invalid authentication credentials'
       });
     }
   } catch (error) {
     next(error);
   }
-};
+}
+
+module.exports = { authenticate };
 

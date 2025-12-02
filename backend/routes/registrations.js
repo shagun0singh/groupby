@@ -1,6 +1,6 @@
-import express from "express";
-import Registration from "../models/Registration.js";
-import { authenticate } from "../middleware/auth.js";
+const express = require('express');
+const Registration = require('../models/Registration');
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -84,5 +84,5 @@ router.patch("/:id/cancel", authenticate, async (req, res, next) => {
   }
 });
 
-export default router;
+module.exports = router;
 

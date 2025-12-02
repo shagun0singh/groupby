@@ -1,5 +1,5 @@
-import express from "express";
-import { authenticate } from "../middleware/auth.js";
+const express = require('express');
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -167,5 +167,5 @@ router.get("/search", authenticate, locationRateLimit, async (req, res, next) =>
   }
 });
 
-export default router;
+module.exports = router;
 

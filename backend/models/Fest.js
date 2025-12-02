@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const locationSchema = new mongoose.Schema({
   city: { type: String, required: true },
@@ -121,5 +121,5 @@ festSchema.index({ slug: 1 }, { unique: true });
 festSchema.index({ category: 1 });
 festSchema.index({ createdAt: -1 });
 
-export default mongoose.model("Fest", festSchema);
+module.exports = mongoose.model('Fest', festSchema);
 

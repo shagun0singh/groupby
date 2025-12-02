@@ -3,6 +3,7 @@ backend/.env
 frontend/node_modules/
 frontend/.env
 frontend/dist/
+frontend/.next/
 backend/dist/
 
 # Root ignores
@@ -12,4 +13,5 @@ node_modules/
 *.log
 dist/
 build/
+.next/
 
