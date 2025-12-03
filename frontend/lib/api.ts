@@ -80,120 +80,121 @@ export function removeAuthToken() {
   }
 }
 
-// Fest API Types
-export interface Fest {
+// Event API Types
+export interface Event {
   _id: string;
   title: string;
   slug: string;
+  type: 'Workshop' | 'Meetup' | 'Class' | 'Social' | 'Sports' | 'Arts' | 'Tech' | 'Food' | 'Other';
   category: string;
   description: string;
-  image: string;
-  tagline?: string;
-  college: string;
-  date: string;
-  duration?: string;
-  location: {
-    city: string;
-    state: string;
-    address?: string;
-    coordinates?: number[];
-  };
-  organizer: {
-    name: string;
-    role: string;
-    college: string;
-    email?: string;
-    phone?: string;
-    instagram?: string;
-    linkedin?: string;
-  };
-  entryType: string;
-  entryFee?: number;
-  expectedFootfall?: string;
-  website?: string;
-  brochure?: string;
-  events: Array<{
-    name: string;
-    date: string;
-    time: string;
-    venue: string;
-    category: string;
-    prize?: string;
-    limit?: string;
-  }>;
+  image?: string;
   hostedBy: {
     _id: string;
     name: string;
     email: string;
-    college?: string;
+    profilePic?: string;
+    hostProfile?: {
+      rating: number;
+      verified: boolean;
+    };
   };
-  registrationsCount: number;
-  status: string;
+  location: {
+    address: string;
+    city: string;
+    state: string;
+    coordinates?: number[];
+  };
+  date: Date | string;
+  time: string;
+  duration?: string;
+  maxParticipants: number;
+  currentParticipants: number;
+  requiresApproval: boolean;
+  interests: string[];
+  price: number;
+  priceType: 'Free' | 'Paid' | 'Donation';
+  visibility: 'public' | 'private' | 'invite-only';
+  status: 'open' | 'full' | 'cancelled' | 'completed';
+  requirements?: string;
+  ageRestriction?: {
+    minAge?: number;
+    maxAge?: number;
+  };
+  tags: string[];
   createdAt: string;
   updatedAt: string;
 }
 
-export interface FestsResponse {
-  fests: Fest[];
+export interface EventsResponse {
+  events: Event[];
   total: number;
   skip: number;
   limit: number;
 }
 
-export interface Registration {
+export interface Participant {
   _id: string;
   user: string;
-  fest: Fest;
-  registeredEvents: string[];
-  status: string;
-  paymentStatus: string;
-  paymentAmount: number;
-  registrationDate: string;
+  event: Event;
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled' | 'attended';
+  applicationMessage?: string;
+  appliedAt: Date | string;
+  respondedAt?: Date | string;
+  hostResponse?: string;
+  rating?: number;
+  review?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-// Fest API Functions
-export async function fetchFests(params?: {
+// Event API Functions
+export async function fetchEvents(params?: {
   skip?: number;
   limit?: number;
   category?: string;
+  type?: string;
+  city?: string;
+  interests?: string;
   search?: string;
-}): Promise<FestsResponse> {
+}): Promise<EventsResponse> {
   const queryParams = new URLSearchParams();
   if (params?.skip !== undefined) queryParams.append('skip', params.skip.toString());
   if (params?.limit !== undefined) queryParams.append('limit', params.limit.toString());
   if (params?.category) queryParams.append('category', params.category);
+  if (params?.type) queryParams.append('type', params.type);
+  if (params?.city) queryParams.append('city', params.city);
+  if (params?.interests) queryParams.append('interests', params.interests);
   if (params?.search) queryParams.append('search', params.search);
 
-  const response = await fetch(`${API_BASE_URL}/api/fests?${queryParams}`);
+  const response = await fetch(`${API_BASE_URL}/api/events?${queryParams}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch fests");
+    throw new Error("Failed to fetch events");
   }
 
   return response.json();
 }
 
-export async function fetchFestBySlug(slug: string): Promise<Fest> {
-  const response = await fetch(`${API_BASE_URL}/api/fests/${slug}`);
+export async function fetchEventBySlug(slug: string): Promise<Event> {
+  const response = await fetch(`${API_BASE_URL}/api/events/${slug}`);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || "Fest not found");
+    throw new Error(error.message || "Event not found");
   }
 
   return response.json();
 }
 
-export async function createFest(data: any): Promise<Fest> {
+export async function createEvent(data: any): Promise<Event> {
   const token = getAuthToken();
   
   if (!token) {
     throw new Error("Authentication required");
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/fests`, {
+  const response = await fetch(`${API_BASE_URL}/api/events`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -204,20 +205,20 @@ export async function createFest(data: any): Promise<Fest> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || "Failed to create fest");
+    throw new Error(error.message || "Failed to create event");
   }
 
   return response.json();
 }
 
-export async function updateFest(festId: string, data: any): Promise<Fest> {
+export async function updateEvent(eventId: string, data: any): Promise<Event> {
   const token = getAuthToken();
 
   if (!token) {
     throw new Error("Authentication required");
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/fests/${festId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -228,84 +229,20 @@ export async function updateFest(festId: string, data: any): Promise<Fest> {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(error.detail || "Failed to update fest");
+    throw new Error(error.message || "Failed to update event");
   }
 
   return response.json();
 }
 
-export async function registerForFest(festId: string, registeredEvents?: string[]): Promise<Registration> {
+export async function deleteEvent(eventId: string): Promise<void> {
   const token = getAuthToken();
   
   if (!token) {
     throw new Error("Authentication required");
   }
   
-  const response = await fetch(`${API_BASE_URL}/api/fests/${festId}/register`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`,
-    },
-    body: JSON.stringify({ registeredEvents: registeredEvents || [] }),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "Registration failed");
-  }
-
-  return response.json();
-}
-
-export async function getMyRegistrations(): Promise<Registration[]> {
-  const token = getAuthToken();
-  
-  if (!token) {
-    throw new Error("Authentication required");
-  }
-  
-  const response = await fetch(`${API_BASE_URL}/api/registrations/my-registrations`, {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch registrations");
-  }
-
-  return response.json();
-}
-
-export async function getMyHostedFests(): Promise<Fest[]> {
-  const token = getAuthToken();
-  
-  if (!token) {
-    throw new Error("Authentication required");
-  }
-  
-  const response = await fetch(`${API_BASE_URL}/api/fests/user/my-fests`, {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch hosted fests");
-  }
-
-  return response.json();
-}
-
-export async function deleteFest(festId: string): Promise<void> {
-  const token = getAuthToken();
-  
-  if (!token) {
-    throw new Error("Authentication required");
-  }
-  
-  const response = await fetch(`${API_BASE_URL}/api/fests/${festId}`, {
+  const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -314,7 +251,120 @@ export async function deleteFest(festId: string): Promise<void> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || "Failed to delete fest");
+    throw new Error(error.message || "Failed to delete event");
   }
+}
+
+export async function getMyHostedEvents(): Promise<Event[]> {
+  const token = getAuthToken();
+  
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+  
+  const response = await fetch(`${API_BASE_URL}/api/events/user/my-events`, {
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch hosted events");
+  }
+
+  return response.json();
+}
+
+// Participant API Functions
+export async function applyToEvent(eventId: string, applicationMessage?: string): Promise<Participant> {
+  const token = getAuthToken();
+  
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+  
+  const response = await fetch(`${API_BASE_URL}/api/participants/apply`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    body: JSON.stringify({ eventId, applicationMessage }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Application failed");
+  }
+
+  return response.json();
+}
+
+export async function getMyApplications(): Promise<Participant[]> {
+  const token = getAuthToken();
+  
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+  
+  const response = await fetch(`${API_BASE_URL}/api/participants/my-applications`, {
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch applications");
+  }
+
+  return response.json();
+}
+
+export async function approveParticipant(participantId: string, hostResponse?: string): Promise<Participant> {
+  const token = getAuthToken();
+  
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+  
+  const response = await fetch(`${API_BASE_URL}/api/participants/${participantId}/approve`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    body: JSON.stringify({ hostResponse }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to approve participant");
+  }
+
+  return response.json();
+}
+
+export async function rejectParticipant(participantId: string, hostResponse?: string): Promise<Participant> {
+  const token = getAuthToken();
+  
+  if (!token) {
+    throw new Error("Authentication required");
+  }
+  
+  const response = await fetch(`${API_BASE_URL}/api/participants/${participantId}/reject`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    body: JSON.stringify({ hostResponse }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to reject participant");
+  }
+
+  return response.json();
 }
 

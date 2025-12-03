@@ -3,100 +3,93 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { CartoonButton } from "@/components/ui/cartoon-button";
 import { ProfileButton } from "@/components/ui/profile-button";
-import { ArrowLeft, MapPin, Calendar, Clock, Users, Mail, Phone, Instagram, Linkedin, ExternalLink, Download, Loader2 } from "lucide-react";
-import { getAuthToken, fetchFestBySlug, registerForFest, getMyRegistrations, type Fest, type Registration } from "@/lib/api";
+import { ArrowLeft, MapPin, Calendar, Clock, Users, Mail, Phone, Instagram, Linkedin, Loader2, CheckCircle } from "lucide-react";
+import { getAuthToken, fetchEventBySlug, applyToEvent, getMyApplications, type Event, type Participant } from "@/lib/api";
 
-export default function FestDetailPage() {
+export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
 
-  const [fest, setFest] = useState<Fest | null>(null);
+  const [event, setEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
-  const [isAlreadyRegistered, setIsAlreadyRegistered] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [applicationMessage, setApplicationMessage] = useState("");
+  const [myApplication, setMyApplication] = useState<Participant | null>(null);
 
   useEffect(() => {
-    async function loadFest() {
+    async function loadEvent() {
       try {
         setIsLoading(true);
         setError(null);
-        const data = await fetchFestBySlug(slug);
-        setFest(data);
+        const data = await fetchEventBySlug(slug);
+        setEvent(data);
       } catch (err) {
-        console.error("Failed to load fest:", err);
+        console.error("Failed to load event:", err);
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Failed to load fest");
+          setError("Failed to load event");
         }
       } finally {
         setIsLoading(false);
       }
     }
 
-    loadFest();
+    loadEvent();
   }, [slug]);
 
-  // Check if user is already registered for this fest
+  // Check if user already applied
   useEffect(() => {
-    async function checkRegistration() {
-      if (!fest) return;
-    const token = getAuthToken();
+    async function checkApplication() {
+      if (!event) return;
+      const token = getAuthToken();
       if (!token) return;
 
       try {
-        const registrations: Registration[] = await getMyRegistrations();
-        const already = registrations.some((reg) => reg.fest && reg.fest._id === fest._id);
-        if (already) {
-          setIsAlreadyRegistered(true);
-          setRegistrationSuccess(true);
+        const applications: Participant[] = await getMyApplications();
+        const existing = applications.find((app) => 
+          app.event && (typeof app.event === 'object' ? app.event._id === event._id : app.event === event._id)
+        );
+        if (existing) {
+          setMyApplication(existing);
         }
       } catch (err) {
-        // silently ignore – registration info is just for UX
-        console.error("Failed to check registration status:", err);
-    }
+        console.error("Failed to check application status:", err);
+      }
     }
 
-    checkRegistration();
-  }, [fest]);
+    checkApplication();
+  }, [event]);
 
-  const handleRegisterClick = async () => {
+  const handleApplyClick = async () => {
     const token = getAuthToken();
     if (!token) {
       router.push("/login");
       return;
     }
 
-    if (!fest) {
-      alert("Fest not found. Please try again.");
+    if (!event) {
+      alert("Event not found. Please try again.");
       return;
     }
 
     try {
-      setIsRegistering(true);
-      await registerForFest(fest._id);
-      setRegistrationSuccess(true);
-      setIsAlreadyRegistered(true);
-      alert(`Successfully registered for ${fest.title}! 🎉`);
+      setIsApplying(true);
+      const application = await applyToEvent(event._id, applicationMessage);
+      setMyApplication(application);
+      alert(event.requiresApproval 
+        ? `Application submitted! The host will review and respond soon.` 
+        : `You're in! See you at the event! 🎉`
+      );
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Registration failed. You may already be registered.";
-      if (message.toLowerCase().includes("already registered")) {
-        setIsAlreadyRegistered(true);
-        setRegistrationSuccess(true);
-        alert("You have already registered for this fest.");
-    } else {
-        alert(message);
-      }
+      const message = err instanceof Error ? err.message : "Application failed";
+      alert(message);
     } finally {
-      setIsRegistering(false);
+      setIsApplying(false);
+      setApplicationMessage("");
     }
   };
 
@@ -106,13 +99,13 @@ export default function FestDetailPage() {
         <Loader2 className="w-12 h-12 animate-spin text-gray-500" />
       </div>
     );
-    }
+  }
 
-  if (!fest) {
+  if (!event) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold mb-4 text-black">Fest not found</h1>
+          <h1 className="text-2xl font-semibold mb-4 text-black">Event not found</h1>
           <Link
             href="/events"
             className="text-blue-600 hover:text-blue-700 underline"
@@ -124,149 +117,163 @@ export default function FestDetailPage() {
     );
   }
 
+  const isFull = event.currentParticipants >= event.maxParticipants;
+  const spotsLeft = event.maxParticipants - event.currentParticipants;
+
   return (
     <div className="min-h-screen bg-white text-black">
-      {/* 1. Hero Section */}
-      <section className="relative w-full h-[60vh] min-h-[420px] overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${fest.image})`,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/10" />
-        </div>
+      <section className="relative w-full h-[50vh] min-h-[400px] overflow-hidden">
+        {event.image ? (
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${event.image})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/10" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600">
+            <div className="absolute inset-0 bg-black/20" />
+          </div>
+        )}
         
         <div className="absolute top-5 left-5 z-50">
           <Link
             href="/events"
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-gray-900/60 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-gray-900/70 cursor-pointer"
+            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-gray-900/60 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-gray-900/70"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Events
           </Link>
-          </div>
+        </div>
 
         <div className="relative z-10 flex flex-col justify-end h-full px-6 lg:px-16 pb-10">
           <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium bg-white/90 text-gray-900 rounded-full shadow-sm">
-              {fest.category}
+            <div className="flex gap-2">
+              <span className="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium bg-white/90 text-gray-900 rounded-full">
+                {event.type}
+              </span>
+              <span className="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium bg-white/90 text-gray-900 rounded-full">
+                {event.category}
+              </span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-semibold text-white leading-tight">
-              {fest.title}
+            <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">
+              {event.title}
             </h1>
-            <p className="text-base md:text-lg text-white/90 max-w-2xl">
-              {fest.tagline || fest.description}
+            <p className="text-base md:text-lg text-white/90 max-w-2xl line-clamp-2">
+              {event.description}
             </p>
             <div className="flex flex-wrap gap-4 text-xs md:text-sm text-white/85">
               <div className="inline-flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-white/80" />
-                <span>{fest.date}</span>
+                <Calendar className="w-4 h-4" />
+                <span>{new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
               </div>
               <div className="inline-flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-white/80" />
-                <span>{fest.location.city}, {fest.location.state}</span>
-            </div>
+                <Clock className="w-4 h-4" />
+                <span>{event.time}</span>
+              </div>
               <div className="inline-flex items-center gap-2">
-                <Users className="w-4 h-4 text-white/80" />
-                <span>{fest.registrationsCount} registered</span>
+                <MapPin className="w-4 h-4" />
+                <span>{event.location.city}</span>
+              </div>
+              <div className="inline-flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                <span>{event.currentParticipants}/{event.maxParticipants} joined</span>
+              </div>
             </div>
-            </div>
-          </div>
-            </div>
-      </section>
-
-      {/* 2. Quick Info Bar */}
-      <section className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-200">
-        <div className="px-6 lg:px-16 py-4 flex flex-wrap justify-between items-center gap-4">
-          <div>
-            <h2 className="text-xl font-semibold text-black">{fest.title}</h2>
-            <p className="text-sm text-gray-600">{fest.college}</p>
-          </div>
-            <div className="flex flex-col items-end gap-1">
-            <button 
-              onClick={handleRegisterClick}
-                disabled={isRegistering || registrationSuccess || isAlreadyRegistered}
-                className="px-6 py-2 bg-[#FFD95A] text-black rounded-lg font-medium hover:bg-[#f5c941] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isRegistering ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Registering...
-                  </>
-                ) : registrationSuccess || isAlreadyRegistered ? (
-                  "✓ Already registered"
-                ) : (
-                  "Register Now"
-                )}
-            </button>
-              {(registrationSuccess || isAlreadyRegistered) && (
-                <span className="text-xs text-green-700">
-                  You have already registered for this fest.
-                </span>
-              )}
           </div>
         </div>
       </section>
 
-      {/* 3. Main Content */}
+      {/* Quick Action Bar */}
+      <section className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-gray-200">
+        <div className="px-6 lg:px-16 py-4 flex flex-wrap justify-between items-center gap-4">
+          <div>
+            <h2 className="text-xl font-semibold text-black">{event.title}</h2>
+            <p className="text-sm text-gray-600">
+              {event.priceType === 'Free' ? 'Free Event' : `₹${event.price}`}
+              {spotsLeft > 0 && spotsLeft <= 5 && <span className="ml-2 text-orange-600">• Only {spotsLeft} spots left!</span>}
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            {myApplication ? (
+              <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-medium">
+                  {myApplication.status === 'pending' && 'Application Pending'}
+                  {myApplication.status === 'approved' && "You're In!"}
+                  {myApplication.status === 'rejected' && 'Not Approved'}
+                  {myApplication.status === 'cancelled' && 'Cancelled'}
+                </span>
+              </div>
+            ) : (
+              <button 
+                onClick={() => {
+                  const token = getAuthToken();
+                  if (!token) {
+                    router.push('/login');
+                  } else if (event.requiresApproval) {
+                    const message = prompt("Why would you like to join this event? (Optional)");
+                    if (message !== null) {
+                      setApplicationMessage(message);
+                      handleApplyClick();
+                    }
+                  } else {
+                    handleApplyClick();
+                  }
+                }}
+                disabled={isApplying || isFull}
+                className="px-6 py-2 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isApplying ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Applying...
+                  </>
+                ) : isFull ? (
+                  "Event Full"
+                ) : event.requiresApproval ? (
+                  "Apply to Join"
+                ) : (
+                  "Join Now"
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
       <main className="px-6 lg:px-16 py-12">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-10 lg:gap-12">
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-10">
           {/* Left Column - Main Info */}
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-8">
             {/* About */}
             <section className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">About {fest.title}</h3>
-              <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-                {fest.description}
+              <h3 className="text-xl font-semibold text-gray-900">About this event</h3>
+              <p className="text-base text-gray-700 leading-relaxed whitespace-pre-line">
+                {event.description}
               </p>
             </section>
 
-            {/* Events Schedule */}
-            {fest.events && fest.events.length > 0 && (
+            {/* What to bring/know */}
+            {event.requirements && (
               <section className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-900">Events & Activities</h3>
-                <div className="space-y-3">
-                  {fest.events.map((event, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-white border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors"
-                    >
-                      <div className="flex justify-between items-start mb-2.5">
-            <div>
-                          <h4 className="text-base font-semibold text-gray-900">{event.name}</h4>
-                          <span className="mt-1 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-800">
-                            {event.category}
-                          </span>
-                        </div>
-                        {event.prize && (
-                          <div className="text-right">
-                            <div className="text-xs text-gray-500">Prize</div>
-                            <div className="text-sm font-semibold text-gray-900">{event.prize}</div>
-                          </div>
-                        )}
-            </div>
-                      <div className="flex flex-wrap gap-3 text-xs md:text-sm text-gray-700">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          {event.date}
-            </div>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4" />
-                          {event.time}
-          </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          {event.venue}
-            </div>
-                        {event.limit && (
-                          <div className="flex items-center gap-2">
-                            <Users className="w-4 h-4" />
-                            {event.limit}
-            </div>
-                        )}
-          </div>
-                    </div>
+                <h3 className="text-xl font-semibold text-gray-900">What you'll need</h3>
+                <p className="text-base text-gray-700 leading-relaxed">
+                  {event.requirements}
+                </p>
+              </section>
+            )}
+
+            {/* Interests */}
+            {event.interests && event.interests.length > 0 && (
+              <section className="space-y-3">
+                <h3 className="text-xl font-semibold text-gray-900">Interests</h3>
+                <div className="flex flex-wrap gap-2">
+                  {event.interests.map((interest, idx) => (
+                    <span key={idx} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                      {interest}
+                    </span>
                   ))}
                 </div>
               </section>
@@ -277,122 +284,104 @@ export default function FestDetailPage() {
           <div className="space-y-6">
             {/* Event Details Card */}
             <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-              <h4 className="text-sm font-semibold mb-3 text-gray-900 uppercase tracking-[0.14em]">
-                Event details
+              <h4 className="text-sm font-semibold mb-4 text-gray-900 uppercase tracking-wider">
+                Event Details
               </h4>
               <div className="space-y-3 text-sm">
                 <div>
-                  <div className="text-xs text-gray-500 uppercase tracking-[0.12em] mb-0.5">Entry</div>
-                  <div className="text-sm font-semibold text-gray-900">{fest.entryType}</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">When</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                  </div>
+                  <div className="text-sm text-gray-600">{event.time}</div>
+                  {event.duration && <div className="text-sm text-gray-600">Duration: {event.duration}</div>}
                 </div>
-                {fest.duration && (
+                <div>
+                  <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Where</div>
+                  <div className="text-sm font-medium text-gray-900">{event.location.address || event.location.city}</div>
+                  <div className="text-sm text-gray-600">{event.location.city}, {event.location.state}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Group Size</div>
+                  <div className="text-sm font-medium text-gray-900">{event.currentParticipants}/{event.maxParticipants} people</div>
+                  {spotsLeft > 0 && spotsLeft <= 5 && (
+                    <div className="text-xs text-orange-600 mt-1">Only {spotsLeft} spots remaining</div>
+                  )}
+                </div>
+                {event.ageRestriction && (event.ageRestriction.minAge || event.ageRestriction.maxAge) && (
                   <div>
-                    <div className="text-xs text-gray-500 uppercase tracking-[0.12em] mb-0.5">Duration</div>
-                    <div className="text-sm font-semibold text-gray-900">{fest.duration}</div>
+                    <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">Age</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {event.ageRestriction.minAge && event.ageRestriction.maxAge 
+                        ? `${event.ageRestriction.minAge}-${event.ageRestriction.maxAge} years`
+                        : event.ageRestriction.minAge 
+                        ? `${event.ageRestriction.minAge}+ years`
+                        : `Up to ${event.ageRestriction.maxAge} years`
+                      }
                     </div>
-                )}
-                {fest.expectedFootfall && (
-                  <div>
-                    <div className="text-xs text-gray-500 uppercase tracking-[0.12em] mb-0.5">Expected footfall</div>
-                    <div className="text-sm font-semibold text-gray-900">{fest.expectedFootfall}</div>
                   </div>
                 )}
-                <div>
-                  <div className="text-xs text-gray-500 uppercase tracking-[0.12em] mb-0.5">Registrations</div>
-                  <div className="text-sm font-semibold text-gray-900">{fest.registrationsCount} people</div>
-                </div>
               </div>
             </div>
             
-            {/* Organizer Card */}
+            {/* Host Card */}
             <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
-              <h4 className="text-sm font-semibold mb-3 text-gray-900 uppercase tracking-[0.14em]">
-                Contact organizer
+              <h4 className="text-sm font-semibold mb-4 text-gray-900 uppercase tracking-wider">
+                Hosted by
               </h4>
-              <div className="space-y-2.5 text-sm">
-                <div>
-                  <div className="font-semibold text-gray-900">{fest.organizer.name}</div>
-                  <div className="text-gray-600">{fest.organizer.role}</div>
-                  <div className="text-gray-600">{fest.organizer.college}</div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  {event.hostedBy.profilePic ? (
+                    <img src={event.hostedBy.profilePic} alt={event.hostedBy.name} className="w-12 h-12 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white font-bold">
+                      {event.hostedBy.name.charAt(0)}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-gray-900">{event.hostedBy.name}</p>
+                      {event.hostedBy.hostProfile?.verified && (
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Verified</span>
+                      )}
+                    </div>
+                    {event.hostedBy.hostProfile?.rating && (
+                      <div className="text-xs text-gray-600">
+                        ⭐ {event.hostedBy.hostProfile.rating.toFixed(1)} rating
+                      </div>
+                    )}
+                  </div>
                 </div>
-                {fest.organizer.email && (
+                {event.hostedBy.email && (
                   <a
-                    href={`mailto:${fest.organizer.email}`}
-                    className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
+                    href={`mailto:${event.hostedBy.email}`}
+                    className="flex items-center gap-2 text-sm text-gray-700 hover:text-black transition-colors"
                   >
-                  <Mail className="w-4 h-4" />
-                    {fest.organizer.email}
-                </a>
-              )}
-                {fest.organizer.phone && (
-                  <a
-                    href={`tel:${fest.organizer.phone}`}
-                    className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
-                  >
-                  <Phone className="w-4 h-4" />
-                    {fest.organizer.phone}
-                </a>
-              )}
-                {fest.organizer.instagram && (
-                <a
-                    href={`https://instagram.com/${fest.organizer.instagram.replace('@', '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
-                >
-                  <Instagram className="w-4 h-4" />
-                    {fest.organizer.instagram}
-                </a>
-              )}
-                {fest.organizer.linkedin && (
-                <a
-                    href={`https://linkedin.com/in/${fest.organizer.linkedin}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
-                >
-                  <Linkedin className="w-4 h-4" />
-                    LinkedIn Profile
-                </a>
-              )}
-            </div>
+                    <Mail className="w-4 h-4" />
+                    Contact host
+                  </a>
+                )}
+              </div>
             </div>
 
-            {/* Resources */}
-            {(fest.website || fest.brochure) && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-                <h4 className="text-lg font-semibold mb-4 text-black">Resources</h4>
-                <div className="space-y-3">
-                  {fest.website && (
-              <a
-                      href={fest.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all group text-gray-800"
-                    >
-                      <div className="flex items-center gap-2">
-                        <ExternalLink className="w-4 h-4" />
-                        <span className="text-sm font-medium">Official Website</span>
-                      </div>
-                      <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </a>
-                  )}
-                  {fest.brochure && (
-                    <a
-                      href={fest.brochure}
-                target="_blank"
-                rel="noopener noreferrer"
-                      className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all group text-gray-800"
-              >
-                      <div className="flex items-center gap-2">
-                        <Download className="w-4 h-4" />
-                        <span className="text-sm font-medium">Download Brochure</span>
-                      </div>
-                      <Download className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </a>
-                  )}
-                </div>
-            </div>
+            {/* Application Status */}
+            {myApplication && (
+              <div className={`border rounded-lg p-5 ${
+                myApplication.status === 'approved' ? 'bg-green-50 border-green-200' :
+                myApplication.status === 'pending' ? 'bg-yellow-50 border-yellow-200' :
+                'bg-gray-50 border-gray-200'
+              }`}>
+                <h4 className="text-sm font-semibold mb-2">Your Application</h4>
+                <p className="text-sm text-gray-700 mb-2">
+                  Status: <span className="font-semibold capitalize">{myApplication.status}</span>
+                </p>
+                {myApplication.hostResponse && (
+                  <div className="mt-3 pt-3 border-t">
+                    <p className="text-xs text-gray-500 mb-1">Host's response:</p>
+                    <p className="text-sm text-gray-700">{myApplication.hostResponse}</p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

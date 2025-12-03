@@ -3,38 +3,24 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
 import SuggestiveSearch from "@/components/ui/suggestive-search";
 import { ProfileButton } from "@/components/ui/profile-button";
 import Pagination from "@/components/ui/pagination";
-import { ArrowUpRight, Loader2 } from "lucide-react";
-import { PlaceCard } from "@/components/ui/card-22";
-import { getAuthToken, fetchFests, type Fest } from "@/lib/api";
+import { Loader2, MapPin, Users, Calendar, Clock } from "lucide-react";
+import { getAuthToken, fetchEvents, type Event } from "@/lib/api";
 
-// Dynamically import map component to avoid SSR issues
-const EventsMap = dynamic(() => import("@/components/ui/events-map"), {
-  ssr: false,
-  loading: () => (
-    <div className="h-full w-full bg-gray-100 rounded-lg flex items-center justify-center">
-      <p className="text-gray-500">Loading map...</p>
-    </div>
-  ),
-});
-
-
-
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 12;
 
 export default function EventsPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [fests, setFests] = useState<Fest[]>([]);
-  const [totalFests, setTotalFests] = useState(0);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [totalEvents, setTotalEvents] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFest, setSelectedFest] = useState<Fest | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   useEffect(() => {
     const token = getAuthToken();
@@ -42,69 +28,47 @@ export default function EventsPage() {
   }, []);
 
   useEffect(() => {
-    async function loadFests() {
+    async function loadEvents() {
       try {
         setIsLoading(true);
         setError(null);
         
-        const data = await fetchFests({
+        const data = await fetchEvents({
           skip: (currentPage - 1) * ITEMS_PER_PAGE,
           limit: ITEMS_PER_PAGE,
           search: searchTerm || undefined,
         });
 
-        setFests(data.fests);
-        setTotalFests(data.total);
+        setEvents(data.events);
+        setTotalEvents(data.total);
       } catch (err) {
-        console.error("Failed to load fests:", err);
+        console.error("Failed to load events:", err);
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Failed to load fests");
+          setError("Failed to load events");
         }
       } finally {
         setIsLoading(false);
       }
     }
 
-    loadFests();
+    loadEvents();
   }, [currentPage, searchTerm]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
 
-  const totalPages = Math.ceil(totalFests / ITEMS_PER_PAGE);
-
-  const displayFests = fests;
+  const totalPages = Math.ceil(totalEvents / ITEMS_PER_PAGE);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleExplore = (slug: string) => {
-    router.push(`/events/${slug}`);
-  };
-
-  const handleFestClick = (fest: Fest) => {
-    setSelectedFest(fest);
-    // Scroll to the event card if it's visible
-    const element = document.getElementById(`fest-${fest._id}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-  };
-
-  const handleCardClick = (fest: Fest) => {
-    setSelectedFest(fest);
-    // If fest has coordinates, the map will automatically focus on it
-    // Otherwise, navigate to the event page
-    if (fest.location?.coordinates && fest.location.coordinates.length === 2) {
-      // Map will handle the focus via MapController
-    } else {
-      handleExplore(fest.slug);
-    }
+  const handleEventClick = (event: Event) => {
+    router.push(`/events/${event.slug}`);
   };
 
   return (
@@ -118,10 +82,10 @@ export default function EventsPage() {
         <div className="flex-1 max-w-md">
           <SuggestiveSearch
             suggestions={[
-              "Search for techfests",
-              "Find cultural fests near you",
-              "Explore college fests",
-              "Discover sports tournaments"
+              "Search for workshops",
+              "Find meetups near you",
+              "Explore cooking classes",
+              "Discover photography walks"
             ]}
             effect="typewriter"
             className="w-full"
@@ -134,11 +98,11 @@ export default function EventsPage() {
             <Link href="/" className="text-black hover:text-gray-800 transition-colors pb-1 hover:border-b-2 hover:border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
               Home
             </Link>
-            <Link href="/events" className="text-black hover:text-gray-800 transition-colors pb-1 hover:border-b-2 hover:border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
-              Events
+            <Link href="/events" className="text-black hover:text-gray-800 transition-colors pb-1 border-b-2 border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
+              Discover
             </Link>
             <Link href="/host" className="text-black hover:text-gray-800 transition-colors pb-1 hover:border-b-2 hover:border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
-              Host
+              Host Event
             </Link>
             {!isLoggedIn && (
               <Link href="/login" className="text-black hover:text-gray-800 transition-colors pb-1 hover:border-b-2 hover:border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
@@ -155,61 +119,89 @@ export default function EventsPage() {
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-12 h-12 animate-spin text-gray-600" />
         </div>
-        ) : displayFests.length === 0 ? (
+        ) : events.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-xl text-gray-600 mb-4">
-              {searchTerm ? "No fests found matching your search" : "No fests available yet"}
+              {searchTerm ? "No events found matching your search" : "No events available yet"}
             </p>
             {!searchTerm && (
               <Link
                 href="/host"
                 className="text-gray-800 hover:text-black underline"
               >
-                Be the first to host a fest!
+                Be the first to host an event!
               </Link>
             )}
                 </div>
         ) : (
-          <div className="flex gap-8">
-            {/* Map Section - 30% */}
-            <aside className="w-[30%] hidden lg:block">
-              <div className="sticky top-24 h-[calc(100vh-150px)] min-h-[600px]">
-                <EventsMap
-                  fests={fests}
-                  selectedFest={selectedFest}
-                  onFestClick={handleFestClick}
-                />
-              </div>
-            </aside>
-
-            {/* Events List - 70% */}
-            <div className="flex-1 lg:w-[70%]">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-              {displayFests.map((event: Fest) => {
-                const isSelected = selectedFest?._id === event._id;
-                return (
-                      <div
-                        key={event._id}
-                        id={`fest-${event._id}`}
-                        onClick={() => handleCardClick(event)}
-                        className={`cursor-pointer transition-all ${
-                          isSelected ? "ring-2 ring-blue-500 ring-offset-2 rounded-lg" : ""
-                        }`}
-                      >
-                        <PlaceCard
-                          images={[event.image]}
-                          tags={[event.category, event.location?.city || ""]}
-                          rating={4.8}
-                          title={event.title}
-                          dateRange={event.date}
-                          hostType={event.hostedBy?.college || "College fest"}
-                          isTopRated={event.registrationsCount > 50}
-                          description={event.description || ""}
-                          pricePerNight={event.entryType === "Paid" ? event.entryFee || 0 : 0}
-                        />
-            </div>
-                );
-              })}
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {events.map((event: Event) => (
+                <div
+                  key={event._id}
+                  onClick={() => handleEventClick(event)}
+                  className="cursor-pointer group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all"
+                >
+                  {event.image && (
+                    <div className="relative h-48 bg-gray-200">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 right-3">
+                        <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-xs font-semibold rounded-full">
+                          {event.type}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="p-5">
+                    <h3 className="text-lg font-semibold text-black mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      {event.title}
+                    </h3>
+                    
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                      {event.description}
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {event.interests.slice(0, 3).map((interest, i) => (
+                        <span key={i} className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full">
+                          {interest}
+                        </span>
+                      ))}
+                    </div>
+                    
+                    <div className="space-y-2 text-xs text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        {event.location.city}, {event.location.state}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        {event.currentParticipants}/{event.maxParticipants} joined
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                      <span className="text-sm font-semibold text-black">
+                        {event.priceType === 'Free' ? 'Free' : `₹${event.price}`}
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        event.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                      }`}>
+                        {event.status === 'open' ? 'Open' : event.status === 'full' ? 'Full' : event.status}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
         </div>
         
         {totalPages > 1 && (
@@ -221,11 +213,9 @@ export default function EventsPage() {
             />
                 </div>
               )}
-            </div>
-          </div>
+          </>
         )}
       </main>
     </div>
   );
 }
-

@@ -27,10 +27,10 @@ export default function Home() {
         <div className="flex items-center gap-6">
           <nav className="hidden md:flex gap-6 text-sm font-medium">
             <Link href="/events" className="text-gray-700 hover:text-black transition-colors">
-              Events
+              Discover
             </Link>
             <Link href="/host" className="text-gray-700 hover:text-black transition-colors">
-              Host
+              Host Event
             </Link>
             {!isLoggedIn && (
               <Link href="/login" className="text-gray-700 hover:text-black transition-colors">
@@ -48,10 +48,10 @@ export default function Home() {
           {/* Main Heading */}
           <div className="text-center mb-12">
             <h1 className="text-6xl md:text-7xl font-bold text-black mb-6 leading-tight">
-              Discover college fests<br />with GroupBy
+              Connect through<br />meaningful local experiences
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Connecting students with amazing college events and cultural festivals
+              Join workshops, meetups, and community events. Host your own gatherings with selective, interest-based groups.
             </p>
 
             {/* Email Signup Form */}
@@ -72,7 +72,7 @@ export default function Home() {
               </button>
             </form>
             <p className="text-sm text-gray-500">
-              Connecting over 10,000 students and counting
+              Connecting over 10,000 people through shared interests
             </p>
           </div>
 
@@ -106,7 +106,7 @@ export default function Home() {
                   <div className="space-y-6">
                     {/* Header */}
                     <div className="flex items-center justify-between pb-4 border-b">
-                      <h3 className="font-semibold text-lg">Event Registration</h3>
+                      <h3 className="font-semibold text-lg">Join Event</h3>
                       <div className="flex gap-2">
                         <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                           <span className="text-green-600 text-sm">✓</span>
@@ -121,36 +121,36 @@ export default function Home() {
                     <div className="flex gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex-shrink-0"></div>
                       <div className="flex-1">
-                        <p className="font-semibold text-sm mb-1">Fran Anderson</p>
-                        <p className="text-gray-600 text-sm">I'd like to register for the fest #44433</p>
+                        <p className="font-semibold text-sm mb-1">Sarah Chen</p>
+                        <p className="text-gray-600 text-sm">I'd like to join the Photography Walk this weekend</p>
                       </div>
                     </div>
 
-                    {/* AI Agent Response */}
+                    {/* Host Response */}
                     <div className="flex gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-400 rounded-full flex-shrink-0 flex items-center justify-center">
-                        <span className="text-white text-xs">🤖</span>
+                        <span className="text-white text-xs">✓</span>
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold text-sm mb-2">AI agent</p>
-                        <p className="text-gray-600 text-sm mb-4">Hey Fran, which events would you like to register for?</p>
+                        <p className="font-semibold text-sm mb-2">Host</p>
+                        <p className="text-gray-600 text-sm mb-4">Great! Here are some events that match your interests:</p>
                         
                         {/* Event Cards */}
                         <div className="grid grid-cols-3 gap-3">
                           <div className="border rounded-lg p-2">
-                            <div className="w-full h-16 bg-gray-200 rounded mb-2"></div>
-                            <p className="text-xs font-medium">Dance Competition</p>
-                            <button className="w-full mt-2 py-1 text-xs border rounded hover:bg-gray-50">Select</button>
+                            <div className="w-full h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded mb-2 flex items-center justify-center text-2xl">📸</div>
+                            <p className="text-xs font-medium">Photo Walk</p>
+                            <button className="w-full mt-2 py-1 text-xs border rounded hover:bg-gray-50">Apply</button>
                           </div>
                           <div className="border rounded-lg p-2 bg-black text-white">
-                            <div className="w-full h-16 bg-gray-700 rounded mb-2"></div>
-                            <p className="text-xs font-medium">Music Fest</p>
-                            <button className="w-full mt-2 py-1 text-xs bg-white text-black rounded">Select</button>
+                            <div className="w-full h-16 bg-gradient-to-br from-purple-600 to-pink-600 rounded mb-2 flex items-center justify-center text-2xl">🎨</div>
+                            <p className="text-xs font-medium">Art Workshop</p>
+                            <button className="w-full mt-2 py-1 text-xs bg-white text-black rounded">Apply</button>
                           </div>
                           <div className="border rounded-lg p-2">
-                            <div className="w-full h-16 bg-gray-200 rounded mb-2"></div>
-                            <p className="text-xs font-medium">Tech Summit</p>
-                            <button className="w-full mt-2 py-1 text-xs border rounded hover:bg-gray-50">Select</button>
+                            <div className="w-full h-16 bg-gradient-to-br from-green-100 to-green-200 rounded mb-2 flex items-center justify-center text-2xl">🍳</div>
+                            <p className="text-xs font-medium">Cooking Class</p>
+                            <button className="w-full mt-2 py-1 text-xs border rounded hover:bg-gray-50">Apply</button>
                           </div>
                         </div>
                       </div>
@@ -164,36 +164,36 @@ export default function Home() {
                     <div className="flex items-center gap-3 mb-6">
                       <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
                       <div>
-                        <p className="font-semibold">Fran Anderson</p>
-                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">VIP</span>
+                        <p className="font-semibold">Sarah Chen</p>
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Verified</span>
                       </div>
                     </div>
 
                     <div className="space-y-4">
                       <div>
-                        <p className="text-sm font-semibold mb-2">Registration #44433</p>
+                        <p className="text-sm font-semibold mb-2">Application #44433</p>
                         <span className="inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
                           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                          Confirmed
+                          Approved
                         </span>
                       </div>
 
                       <div className="pt-4 border-t space-y-2">
-                        <p className="text-sm font-semibold">Events</p>
+                        <p className="text-sm font-semibold">Event Details</p>
                         <div className="h-2 bg-gray-200 rounded"></div>
                         <div className="h-2 bg-gray-200 rounded w-3/4"></div>
                       </div>
 
                       <div className="pt-4 border-t space-y-2">
-                        <p className="text-sm font-semibold">Location</p>
+                        <p className="text-sm font-semibold">Meeting Point</p>
                         <div className="h-2 bg-gray-200 rounded"></div>
                         <div className="h-2 bg-gray-200 rounded w-2/3"></div>
                       </div>
 
                       <div className="pt-4 border-t">
-                        <p className="text-sm font-semibold mb-3">AI agent chain of thought</p>
+                        <p className="text-sm font-semibold mb-3">Smart matching</p>
                         <div className="space-y-2">
-                          {['Search knowledge', 'Retrieve event details', 'Verify eligibility', 'Confirm registration'].map((step, i) => (
+                          {['Match interests', 'Check availability', 'Verify profile', 'Send to host'].map((step, i) => (
                             <div key={i} className="flex items-center gap-2 text-xs">
                               <span className="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center">✓</span>
                               <span className="text-gray-600">{step}</span>

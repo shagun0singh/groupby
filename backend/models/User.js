@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'host'],
+      enum: ['user', 'host', 'both'],
       default: 'user'
     },
     bio: {
@@ -57,7 +57,8 @@ const userSchema = new mongoose.Schema(
     interests: [
       {
         type: String,
-        trim: true
+        trim: true,
+        lowercase: true
       }
     ],
     profilePic: {
@@ -77,6 +78,58 @@ const userSchema = new mongoose.Schema(
         type: String,
         trim: true
       }
+    },
+    // Host-specific fields
+    hostProfile: {
+      verified: {
+        type: Boolean,
+        default: false
+      },
+      rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
+      },
+      totalEvents: {
+        type: Number,
+        default: 0
+      },
+      totalParticipants: {
+        type: Number,
+        default: 0
+      },
+      specialties: [{
+        type: String,
+        trim: true
+      }],
+      socialLinks: {
+        instagram: String,
+        linkedin: String,
+        twitter: String,
+        website: String
+      }
+    },
+    // User stats
+    stats: {
+      eventsAttended: {
+        type: Number,
+        default: 0
+      },
+      eventsHosted: {
+        type: Number,
+        default: 0
+      },
+      rating: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0
+      }
+    },
+    isActive: {
+      type: Boolean,
+      default: true
     }
   },
   {

@@ -322,7 +322,7 @@ interface AuthUIProps {
 
 const defaultSignInContent = {
     image: {
-        src: "/fest-photo.webp",
+        src: "/evnet.jpg",
         alt: "A beautiful interior design for sign-in"
     },
     quote: {
@@ -333,7 +333,7 @@ const defaultSignInContent = {
 
 const defaultSignUpContent = {
     image: {
-        src: "/fest-photo.webp",
+        src: "/evnet.jpg",
         alt: "A vibrant, modern space for new beginnings"
     },
     quote: {

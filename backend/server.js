@@ -22,8 +22,8 @@ mongoose.connect(mongoURI)
 });
 
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/fests', require('./routes/fests'));
-app.use('/api/registrations', require('./routes/registrations'));
+app.use('/api/events', require('./routes/events'));
+app.use('/api/participants', require('./routes/participants'));
 app.use('/api/location', require('./routes/location'));
 
 app.get('/health', (req, res) => {
