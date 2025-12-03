@@ -139,78 +139,67 @@ export default function Home() {
                 <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces" alt="Community member" fill className="object-cover" />
               </div>
 
-              {/* White Hero Card - CENTERED */}
+              {/* White Hero Card - CENTERED - Exact Figma Layout */}
               <div 
                 className="absolute bg-white shadow-2xl"
                 style={{
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: '900px',
+                  width: '800px',
                   maxWidth: '90vw',
-                  padding: '64px 80px',
-                  borderRadius: '40px',
-                  zIndex: 10
+                  padding: '80px 100px',
+                  borderRadius: '48px',
+                  zIndex: 10,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
-                <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-                  <h1 style={{ 
-                    fontSize: '56px', 
-                    fontWeight: '800', 
-                    lineHeight: '1.15',
-                    textAlign: 'center',
-                    color: '#000',
-                    marginBottom: '24px',
-                    letterSpacing: '-0.02em'
-                  }}>
-                    Turn Ideas Into Real Connections
-                  </h1>
-                  <p style={{
-                    fontSize: '20px',
-                    lineHeight: '1.6',
-                    textAlign: 'center',
-                    color: '#666',
-                    marginBottom: '40px',
-                    fontWeight: '400'
-                  }}>
-                    Discover local events and build meaningful connections. Join workshops, meetups, and community gatherings tailored to your interests.
-                  </p>
-                  <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                    <Link
-                      href="/events"
-                      style={{ 
-                        background: '#5B5FEF',
-                        color: '#fff',
-                        padding: '16px 40px',
-                        borderRadius: '12px',
-                        fontSize: '17px',
-                        fontWeight: '600',
-                        textDecoration: 'none',
-                        display: 'inline-block',
-                        transition: 'all 0.2s ease',
-                        boxShadow: '0 4px 12px rgba(91, 95, 239, 0.25)'
-                      }}
-                    >
-                      Discover Events
-                    </Link>
-                    <Link
-                      href="/host"
-                      style={{ 
-                        background: '#fff',
-                        color: '#5B5FEF',
-                        padding: '16px 40px',
-                        borderRadius: '12px',
-                        fontSize: '17px',
-                        fontWeight: '600',
-                        textDecoration: 'none',
-                        display: 'inline-block',
-                        border: '2px solid #5B5FEF',
-                        transition: 'all 0.2s ease'
-                      }}
-                    >
-                      Host an Event
-                    </Link>
-                  </div>
+                <h1 style={{ 
+                  fontSize: '72px', 
+                  fontWeight: '500', 
+                  lineHeight: '1.1',
+                  textAlign: 'center',
+                  color: '#000',
+                  marginBottom: '0',
+                  marginTop: '0',
+                  letterSpacing: '-0.03em',
+                  fontFamily: 'system-ui, -apple-system, sans-serif'
+                }}>
+                  Turn Ideas Into Real Connections
+                </h1>
+                <p style={{
+                  fontSize: '21px',
+                  lineHeight: '1.5',
+                  textAlign: 'center',
+                  color: '#4A5568',
+                  marginTop: '60px',
+                  marginBottom: '60px',
+                  fontWeight: '400',
+                  maxWidth: '600px'
+                }}>
+                  GroupBy lets you discover local events and build meaningful connections. Join workshops, meetups, and community gatherings with your community.
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                  <Link
+                    href="/events"
+                    style={{ 
+                      background: '#5B5FEF',
+                      color: '#fff',
+                      padding: '18px 48px',
+                      borderRadius: '12px',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      textDecoration: 'none',
+                      display: 'inline-block',
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 2px 8px rgba(91, 95, 239, 0.2)'
+                    }}
+                  >
+                    Get started
+                  </Link>
                 </div>
               </div>
 
