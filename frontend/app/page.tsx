@@ -39,20 +39,24 @@ export default function Home() {
       </header>
 
       <main className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute top-[100px] left-[30px] w-[140px] h-[140px] rounded-xl overflow-hidden shadow-lg">
-          <Image src="https://images.unsplash.com/photo-1618609378039-b572f64c5b42?w=210&h=210&fit=crop" alt="" width={140} height={140} className="object-cover" />
+        <div className="absolute top-[90px] left-[40px] w-[150px] h-[150px] rounded-xl overflow-hidden shadow-lg">
+          <Image src="https://images.unsplash.com/photo-1618609378039-b572f64c5b42?w=225&h=225&fit=crop" alt="" width={150} height={150} className="object-cover" />
         </div>
 
-        <div className="absolute top-[180px] left-[140px] w-[200px] h-[230px] rounded-xl overflow-hidden shadow-lg">
-          <Image src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=300&h=345&fit=crop" alt="" width={200} height={230} className="object-cover" />
+        <div className="absolute top-[230px] left-[170px] w-[170px] h-[170px] rounded-xl overflow-hidden shadow-lg">
+          <Image src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=255&h=255&fit=crop" alt="" width={170} height={170} className="object-cover" />
         </div>
 
-        <div className="absolute top-[430px] left-[40px] w-[130px] h-[130px] rounded-xl overflow-hidden shadow-lg">
-          <Image src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=195&h=195&fit=crop" alt="" width={130} height={130} className="object-cover" />
+        <div className="absolute top-[390px] left-[60px] w-[210px] h-[210px] rounded-xl overflow-hidden shadow-lg">
+          <Image src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=315&h=315&fit=crop" alt="" width={210} height={210} className="object-cover" />
         </div>
 
-        <div className="absolute bottom-[80px] left-[130px] w-[180px] h-[200px] rounded-xl overflow-hidden shadow-lg">
-          <Image src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=270&h=300&fit=crop" alt="" width={180} height={200} className="object-cover" />
+        <div className="absolute bottom-[150px] left-[200px] w-[185px] h-[220px] rounded-xl overflow-hidden shadow-lg">
+          <Image src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=278&h=330&fit=crop" alt="" width={185} height={220} className="object-cover" />
+        </div>
+
+        <div className="absolute bottom-[60px] left-[50px] w-[160px] h-[160px] rounded-xl overflow-hidden shadow-lg">
+          <Image src="https://images.unsplash.com/photo-1528605105345-5344ea20e269?w=240&h=240&fit=crop" alt="" width={160} height={160} className="object-cover" />
         </div>
 
         <div className="absolute top-[90px] right-[40px] w-[150px] h-[150px] rounded-xl overflow-hidden shadow-lg">
