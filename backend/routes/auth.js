@@ -149,7 +149,6 @@ router.post(
   }
 );
 
-// Get current user profile
 router.get('/me', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');

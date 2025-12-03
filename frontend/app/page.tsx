@@ -15,7 +15,6 @@ export default function Home() {
 
   return (
     <div className="relative w-full min-h-screen bg-[#F5F5F5]">
-      {/* Navbar */}
       <header className="fixed top-0 left-0 right-0 z-[100] bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
           GroupBy
@@ -39,14 +38,11 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <main className="relative w-full overflow-hidden" style={{ height: '100vh', paddingTop: '80px' }}>
         <div className="absolute inset-0 flex items-center justify-center">
           
-          {/* Bento Grid Container */}
           <div className="relative" style={{ width: '1200px', height: '600px' }}>
             
-            {/* 1. Yellow Events - Far Left */}
             <div 
               className="absolute shadow-2xl overflow-hidden"
               style={{
@@ -73,7 +69,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 2. Black Community - Left */}
             <div 
               className="absolute shadow-2xl"
               style={{
@@ -111,7 +106,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 3. Blue Center with White Card */}
             <div 
               className="absolute shadow-2xl overflow-hidden"
               style={{
@@ -247,7 +241,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 5. Light Purple Stats - Far Right */}
             <div 
               className="absolute shadow-2xl"
               style={{
