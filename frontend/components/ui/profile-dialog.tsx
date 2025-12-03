@@ -124,28 +124,41 @@ export function ProfileDialog({ children }: { children: React.ReactNode }) {
     name: string;
     email: string;
     phone: string | null;
-    college: string | null;
+    bio?: string;
+    interests?: string[];
+    location?: any;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [bioValue, setBioValue] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem('auth_token');
+      console.log('Token:', token ? 'Present' : 'Missing');
+      
       if (!token) {
         setIsLoading(false);
         return;
       }
 
       try {
+        console.log('Fetching user data from:', `${API_BASE_URL}/api/auth/me`);
         const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         
+        console.log('Response status:', response.status);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('User data received:', data);
           setUserData(data);
+          setBioValue(data.bio || "");
+        } else {
+          const errorText = await response.text();
+          console.error('Failed to fetch user data:', response.status, errorText);
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -156,16 +169,6 @@ export function ProfileDialog({ children }: { children: React.ReactNode }) {
 
     fetchUserData();
   }, []);
-
-  const {
-    value,
-    characterCount,
-    handleChange,
-    maxLength: limit,
-  } = useCharacterLimit({
-    maxLength,
-    initialValue: "Hey there! I'm a student passionate about college fests and events.",
-  });
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
@@ -198,45 +201,45 @@ export function ProfileDialog({ children }: { children: React.ReactNode }) {
                 <>
                   <div className="space-y-2">
                     <Label htmlFor={`${id}-full-name`} className="text-black">Full Name</Label>
-                    <Input
+                    <input
                       id={`${id}-full-name`}
                       placeholder="Your full name"
                       value={userData?.name || ''}
                       type="text"
                       disabled
-                      className="bg-gray-50 border-gray-200 text-black opacity-60 cursor-not-allowed"
+                      className="flex h-12 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor={`${id}-email`} className="text-black">Email</Label>
-                    <Input
+                    <input
                       id={`${id}-email`}
                       placeholder="john@example.com"
                       value={userData?.email || ''}
                       type="email"
                       disabled
-                      className="bg-gray-50 border-gray-200 text-black opacity-60 cursor-not-allowed"
+                      className="flex h-12 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor={`${id}-phone`} className="text-black">Phone Number</Label>
-                    <Input
+                    <input
                       id={`${id}-phone`}
                       placeholder="+91 98765 43210"
                       value={userData?.phone || ''}
                       type="tel"
                       disabled
-                      className="bg-gray-50 border-gray-200 text-black opacity-60 cursor-not-allowed"
+                      className="flex h-12 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
                     />
                   </div>
               <div className="space-y-2">
-                <Label htmlFor={`${id}-organization`} className="text-black">College / Organization Name</Label>
-                <Input
-                  id={`${id}-organization`}
-                  placeholder="e.g., IIT Delhi, BITS Pilani"
-                  value={userData?.college || ''}
+                <Label htmlFor={`${id}-location`} className="text-black">Location</Label>
+                <input
+                  id={`${id}-location`}
+                  placeholder="e.g., Mumbai, Maharashtra"
+                  value={userData?.location?.city ? `${userData.location.city}${userData.location.state ? ', ' + userData.location.state : ''}` : ''}
                   type="text"
-                  className="bg-gray-50 border-gray-200 text-black"
+                  className="flex h-12 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none focus-visible:border-black focus-visible:ring-1 focus-visible:ring-black"
                 />
               </div>
               <div className="space-y-2">
@@ -244,9 +247,9 @@ export function ProfileDialog({ children }: { children: React.ReactNode }) {
                 <Textarea
                   id={`${id}-bio`}
                   placeholder="Write a few sentences about yourself"
-                  value={value}
+                  value={bioValue}
                   maxLength={maxLength}
-                  onChange={handleChange}
+                  onChange={(e) => setBioValue(e.target.value)}
                   aria-describedby={`${id}-description`}
                   className="bg-white border border-gray-300 text-black"
                 />
@@ -256,9 +259,21 @@ export function ProfileDialog({ children }: { children: React.ReactNode }) {
                   role="status"
                   aria-live="polite"
                 >
-                  <span className="tabular-nums">{limit - characterCount}</span> characters left
+                  <span className="tabular-nums">{maxLength - bioValue.length}</span> characters left
                 </p>
               </div>
+              {userData?.interests && userData.interests.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-black">Your Interests</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.interests.map((interest, i) => (
+                      <span key={i} className="text-xs px-3 py-1 bg-blue-50 text-blue-700 rounded-full">
+                        {interest}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
               </>
               )}
             </form>

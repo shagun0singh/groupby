@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -147,6 +148,36 @@ router.post(
     }
   }
 );
+
+// Get current user profile
+router.get('/me', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      bio: user.bio,
+      age: user.age,
+      interests: user.interests,
+      profilePic: user.profilePic,
+      location: user.location,
+      role: user.role,
+      hostProfile: user.hostProfile,
+      stats: user.stats
+    });
+  } catch (error) {
+    console.error('Get profile error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 module.exports = router;
 

@@ -197,15 +197,22 @@ router.get("/:id/participants", authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
     
+    console.log("Getting participants for event:", id);
+    console.log("Requested by user:", req.user._id);
+    
     const event = await Event.findById(id);
     
     if (!event) {
+      console.log("Event not found:", id);
       return res.status(404).json({
         message: "Event not found"
       });
     }
     
+    console.log("Event found, hosted by:", event.hostedBy);
+    
     if (event.hostedBy.toString() !== req.user._id.toString()) {
+      console.log("Permission denied - not the host");
       return res.status(403).json({
         message: "You don't have permission to view participants"
       });
@@ -215,8 +222,11 @@ router.get("/:id/participants", authenticate, async (req, res, next) => {
       .populate('user', 'name email profilePic bio interests')
       .sort({ appliedAt: -1 });
     
+    console.log("Found participants:", participants.length);
+    
     res.json(participants);
   } catch (error) {
+    console.error("Error getting participants:", error);
     next(error);
   }
 });

@@ -1,13 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ProfileButton } from "@/components/ui/profile-button";
 import { getAuthToken } from "@/lib/api";
 
 export default function Home() {
-  const [isLoggedIn] = useState<boolean>(() => !!getAuthToken());
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  
+  useEffect(() => {
+    setIsLoggedIn(!!getAuthToken());
+  }, []);
 
   return (
     <div className="relative w-full min-h-screen bg-[#F5F5F5]">

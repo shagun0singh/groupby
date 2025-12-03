@@ -6,12 +6,13 @@ import { useState, useEffect } from "react";
 import { ProfileDialog } from "@/components/ui/profile-dialog";
 
 export function ProfileButton() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return !!localStorage.getItem("auth_token");
-  });
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+    setIsLoggedIn(!!localStorage.getItem("auth_token"));
+    
     // Listen for storage changes (when user logs in/out in another tab)
     const handleStorageChange = () => {
       const newToken = localStorage.getItem('auth_token');
@@ -32,7 +33,7 @@ export function ProfileButton() {
     };
   }, []);
 
-  if (!isLoggedIn) {
+  if (!mounted || !isLoggedIn) {
     return null;
   }
 

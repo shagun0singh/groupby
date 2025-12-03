@@ -324,10 +324,19 @@ export default function HostEventPage() {
                 {myEvents.map((event) => (
                   <div
                     key={event._id}
-                    className="group relative rounded-xl border border-gray-200 bg-white p-5 hover:border-gray-300 transition-all cursor-pointer shadow-sm"
-                    onClick={() => router.push(`/events/${event.slug}`)}
+                    className="group relative rounded-xl border border-gray-200 bg-white p-5 hover:border-gray-300 transition-all shadow-sm"
                   >
-                    <div className="absolute right-3 top-3 flex gap-2">
+                    <div className="absolute right-3 top-3 flex gap-2 z-10">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/host/manage/${event._id}`);
+                        }}
+                        className="rounded-full bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
+                      >
+                        Manage ({event.currentParticipants})
+                      </button>
                       <button
                         type="button"
                         onClick={(e) => {
@@ -393,9 +402,13 @@ export default function HostEventPage() {
                       </button>
                     </div>
                     
-                    <h3 className="text-xl font-semibold mb-2 text-black line-clamp-2 pr-24">
-                      {event.title}
-                    </h3>
+                    <div 
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/events/${event.slug}`)}
+                    >
+                      <h3 className="text-xl font-semibold mb-2 text-black line-clamp-2 pr-32">
+                        {event.title}
+                      </h3>
                     <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                       {event.description}
                     </p>
@@ -415,13 +428,14 @@ export default function HostEventPage() {
                       </span>
                     </div>
                     
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">
-                        {event.type}
-                      </span>
-                      <span className="text-gray-500">
-                        {new Date(event.createdAt).toLocaleDateString()}
-                      </span>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">
+                          {event.type}
+                        </span>
+                        <span className="text-gray-500">
+                          {new Date(event.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
