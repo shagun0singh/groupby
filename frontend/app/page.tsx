@@ -139,63 +139,51 @@ export default function Home() {
                 <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces" alt="Community member" fill className="object-cover" />
               </div>
 
-              {/* White Hero Card - CENTERED - Exact Figma Layout */}
+              {/* White Hero Card - EXACT FIGMA MATCH */}
               <div 
                 className="absolute bg-white shadow-2xl"
                 style={{
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: '800px',
+                  width: '1020px',
                   maxWidth: '90vw',
-                  padding: '80px 100px',
+                  padding: '100px 120px',
                   borderRadius: '48px',
                   zIndex: 10,
                   display: 'flex',
                   flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  alignItems: 'flex-start',
+                  justifyContent: 'space-between'
                 }}
               >
                 <h1 style={{ 
-                  fontSize: '72px', 
-                  fontWeight: '500', 
-                  lineHeight: '1.1',
-                  textAlign: 'center',
+                  fontSize: '96px', 
+                  fontWeight: '400', 
+                  lineHeight: '1',
+                  textAlign: 'left',
                   color: '#000',
-                  marginBottom: '0',
-                  marginTop: '0',
-                  letterSpacing: '-0.03em',
-                  fontFamily: 'system-ui, -apple-system, sans-serif'
+                  margin: '0',
+                  letterSpacing: '-0.02em',
+                  fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+                  width: '100%'
                 }}>
-                  Turn Ideas Into Real Connections
+                  Make this design move
                 </h1>
-                <p style={{
-                  fontSize: '21px',
-                  lineHeight: '1.5',
-                  textAlign: 'center',
-                  color: '#4A5568',
-                  marginTop: '60px',
-                  marginBottom: '60px',
-                  fontWeight: '400',
-                  maxWidth: '600px'
-                }}>
-                  GroupBy lets you discover local events and build meaningful connections. Join workshops, meetups, and community gatherings with your community.
-                </p>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '80px' }}>
                   <Link
                     href="/events"
                     style={{ 
-                      background: '#5B5FEF',
+                      background: '#6366F1',
                       color: '#fff',
-                      padding: '18px 48px',
-                      borderRadius: '12px',
-                      fontSize: '18px',
+                      padding: '20px 56px',
+                      borderRadius: '16px',
+                      fontSize: '20px',
                       fontWeight: '600',
                       textDecoration: 'none',
                       display: 'inline-block',
                       transition: 'all 0.2s ease',
-                      boxShadow: '0 2px 8px rgba(91, 95, 239, 0.2)'
+                      boxShadow: 'none'
                     }}
                   >
                     Get started
