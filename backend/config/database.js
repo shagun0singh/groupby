@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017';
-const DATABASE_NAME = process.env.DATABASE_NAME || 'gofest';
+const DATABASE_NAME = process.env.DATABASE_NAME || 'groupby';
 
 async function connectDB() {
   try {

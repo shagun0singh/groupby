@@ -112,7 +112,7 @@ export default function EventsPage() {
       
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5 gap-6">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
-          Gofest.com
+          GroupBy
         </Link>
         
         <div className="flex-1 max-w-md">

@@ -22,7 +22,7 @@ interface FestCarouselProps {
 }
 
 const FestCarousel = ({
-  heading = "Featured events on gofest",
+  heading = "Featured events on GroupBy",
   description = "Discover college fests happening across campuses.",
   events = [],
   onExplore,

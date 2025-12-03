@@ -104,7 +104,7 @@ async function geocodeAddress(fest: Fest): Promise<[number, number] | null> {
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1&countrycodes=in`,
       {
         headers: {
-          'User-Agent': 'GoFest.com College Fest Platform',
+          'User-Agent': 'GroupBy College Fest Platform',
         },
       }
     );

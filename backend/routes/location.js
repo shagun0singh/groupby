@@ -61,7 +61,7 @@ router.get("/reverse-geocode", authenticate, locationRateLimit, async (req, res,
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=10&addressdetails=1`,
       {
         headers: {
-          'User-Agent': 'GoFest.com College Fest Platform',
+          'User-Agent': 'GroupBy College Fest Platform',
           'Accept-Language': 'en'
         },
         signal: AbortSignal.timeout(5000) // 5 second timeout
@@ -127,7 +127,7 @@ router.get("/search", authenticate, locationRateLimit, async (req, res, next) =>
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=in&limit=5&addressdetails=1`,
       {
         headers: {
-          'User-Agent': 'GoFest.com College Fest Platform',
+          'User-Agent': 'GroupBy College Fest Platform',
           'Accept-Language': 'en'
         },
         signal: AbortSignal.timeout(5000)

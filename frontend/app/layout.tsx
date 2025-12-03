@@ -26,7 +26,7 @@ const audiowide = Audiowide({
 });
 
 export const metadata: Metadata = {
-  title: "GoFest - College Fest Management Platform",
+  title: "GroupBy - College Fest Management Platform",
   description: "Discover and host college fests and events",
 };
 

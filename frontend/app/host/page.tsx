@@ -287,7 +287,7 @@ export default function HostFestPage() {
     <div className="min-h-screen bg-white text-black">
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5 gap-6">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
-          Gofest.com
+          GroupBy
         </Link>
 
         <div className="flex items-center gap-2">
@@ -318,7 +318,7 @@ export default function HostFestPage() {
               <div>
                 <h1 className="text-4xl font-bold mb-2 text-black">Your Hosted Fests</h1>
                 <p className="text-gray-600 text-sm md:text-base">
-                  See all the fests you&apos;ve hosted on GoFest. You can open any fest to view its public page.
+                  See all the fests you&apos;ve hosted on GroupBy. You can open any fest to view its public page.
                 </p>
               </div>
               <button

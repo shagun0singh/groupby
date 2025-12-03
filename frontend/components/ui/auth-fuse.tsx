@@ -327,7 +327,7 @@ const defaultSignInContent = {
     },
     quote: {
         text: "Welcome Back! The journey continues.",
-        author: "GOFEST.com"
+        author: "GroupBy"
     }
 };
 
@@ -338,7 +338,7 @@ const defaultSignUpContent = {
     },
     quote: {
         text: "Create an account to register in fests or host a fest.",
-        author: "GOFEST.com"
+        author: "GroupBy"
     }
 };
 

@@ -42,7 +42,7 @@ export default function Home() {
       {/* Navbar */}
       <header className="fixed top-0 left-0 right-0 z-[110] bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5 gap-6">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black relative z-10" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
-          Gofest.com
+          GroupBy
         </Link>
 
         <div className="flex items-center gap-2 relative z-10">
@@ -112,7 +112,7 @@ export default function Home() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
           <div className="relative bg-white rounded-3xl p-12 max-w-lg w-full mx-4 text-center shadow-2xl pointer-events-auto">
             <h1 className="text-4xl font-bold text-black mb-4">
-              Hi, we're GoFest!
+              Hi, we're GroupBy!
             </h1>
             
             <p className="text-black text-lg mb-4 leading-relaxed">
