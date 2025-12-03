@@ -14,7 +14,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen bg-[#F5F5F5]">
+    <div className="relative w-full min-h-screen bg-white overflow-hidden">
       <header className="fixed top-0 left-0 right-0 z-[100] bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
           GroupBy
@@ -38,10 +38,72 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative w-full overflow-hidden" style={{ height: '100vh', paddingTop: '80px' }}>
-        <div className="absolute inset-0 flex items-center justify-center">
+      <main className="relative w-full min-h-screen flex items-center justify-center pt-20">
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[200px] space-y-8 pl-8">
+          <div className="w-[180px] h-[180px] rounded-2xl overflow-hidden shadow-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=300&h=300&fit=crop"
+              alt="Tech Workshop"
+              width={180}
+              height={180}
+              className="object-cover w-full h-full"
+            />
+          </div>
           
-          <div className="relative" style={{ width: '1200px', height: '600px' }}>
+          <div className="w-[160px] h-[220px] rounded-2xl overflow-hidden shadow-lg ml-4">
+            <Image
+              src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=250&h=350&fit=crop"
+              alt="Community Gathering"
+              width={160}
+              height={220}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          
+          <div className="w-[170px] h-[170px] rounded-2xl overflow-hidden shadow-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1528605105345-5344ea20e269?w=270&h=270&fit=crop"
+              alt="Workshop"
+              width={170}
+              height={170}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        </div>
+
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[200px] space-y-8 pr-8">
+          <div className="w-[175px] h-[175px] rounded-2xl overflow-hidden shadow-lg ml-auto">
+            <Image
+              src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=280&h=280&fit=crop"
+              alt="Event"
+              width={175}
+              height={175}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          
+          <div className="w-[190px] h-[240px] rounded-2xl overflow-hidden shadow-lg mr-4">
+            <Image
+              src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300&h=380&fit=crop"
+              alt="Meetup"
+              width={190}
+              height={240}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          
+          <div className="w-[165px] h-[165px] rounded-2xl overflow-hidden shadow-lg ml-auto">
+            <Image
+              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=260&h=260&fit=crop"
+              alt="Networking"
+              width={165}
+              height={165}
+              className="object-cover w-full h-full"
+            />
+          </div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-8 text-center">
             
             <div 
               className="absolute shadow-2xl overflow-hidden"
