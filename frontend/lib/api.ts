@@ -1,13 +1,14 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
 
 export interface SignUpData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  phone?: string;
+  phone: string;
   password: string;
-  college?: string;
-  role?: "student" | "organizer" | "admin";
+  confirmPassword: string;
+  role?: "user" | "host";
 }
 
 export interface SignInData {
@@ -16,14 +17,15 @@ export interface SignInData {
 }
 
 export interface AuthResponse {
-  access_token: string;
-  token_type: string;
+  token: string;
+  message: string;
   user: {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
+    phone: string;
     role: string;
-    college?: string;
   };
 }
 
@@ -38,14 +40,14 @@ export async function signUp(data: SignUpData): Promise<AuthResponse> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || "Sign up failed");
+    throw new Error(error.message || error.errors?.[0]?.msg || "Sign up failed");
   }
 
   return response.json();
 }
 
 export async function signIn(data: SignInData): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/signin`, {
+  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -55,7 +57,7 @@ export async function signIn(data: SignInData): Promise<AuthResponse> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.detail || "Sign in failed");
+    throw new Error(error.message || "Login failed");
   }
 
   return response.json();

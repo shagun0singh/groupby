@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -228,7 +228,7 @@ export default function HostEventPage() {
       if (!eventData.time) throw new Error("Time is required");
       if (!eventData.location.city) throw new Error("City is required");
       if (!eventData.location.state) throw new Error("State is required");
-      if (eventData.maxParticipants < 2) throw new Error("At least 2 participants required");
+      if (!eventData.maxParticipants || eventData.maxParticipants < 1) throw new Error("At least 1 participant required");
 
       let event: Event;
 
@@ -431,37 +431,37 @@ export default function HostEventPage() {
         ) : (
           <div className="max-w-3xl mx-auto">
             <div className="mb-8 flex items-center justify-between">
-              <div>
+                <div>
                 <h1 className="text-4xl font-bold mb-2 text-black">
                   {editingEventId ? "Edit Event" : "Host an Event"}
-                </h1>
+                  </h1>
                 <p className="text-gray-600">
                   {editingEventId ? "Update your event details" : "Create a community gathering"}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setView("list");
+            </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setView("list");
                   setEditingEventId(null);
-                }}
-                className="text-sm text-gray-600 hover:text-black underline"
-              >
+                  }}
+                  className="text-sm text-gray-600 hover:text-black underline"
+                >
                 ← Back to events
-              </button>
-            </div>
+                </button>
+          </div>
 
-            {error && (
+          {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg mb-8">
-                {error}
-              </div>
-            )}
+              {error}
+            </div>
+          )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Basic Information */}
-              <section className="space-y-4">
+            <section className="space-y-4">
                 <h2 className="text-2xl font-bold text-black mb-4">Basic Information</h2>
-                
+              
                 <Input
                   label="Event Title *"
                   placeholder="e.g., Morning Photography Walk"
@@ -475,7 +475,7 @@ export default function HostEventPage() {
                   <div>
                     <label className="block text-sm font-medium text-black mb-2">Event Type *</label>
                     <select
-                      required
+                  required
                       value={eventData.type}
                       onChange={(e) => handleInputChange("type", e.target.value)}
                       className="w-full h-12 rounded-lg border border-gray-300 focus:border-black focus:ring-1 focus:ring-black bg-white text-black px-3 outline-none"
@@ -485,19 +485,19 @@ export default function HostEventPage() {
                       ))}
                     </select>
                   </div>
-                  
-                  <div>
+
+                <div>
                     <label className="block text-sm font-medium text-black mb-2">Category *</label>
-                    <select
-                      required
+                  <select
+                    required
                       value={eventData.category}
-                      onChange={(e) => handleInputChange("category", e.target.value)}
+                    onChange={(e) => handleInputChange("category", e.target.value)}
                       className="w-full h-12 rounded-lg border border-gray-300 focus:border-black focus:ring-1 focus:ring-black bg-white text-black px-3 outline-none"
-                    >
+                  >
                       {CATEGORIES.map(cat => (
                         <option key={cat} value={cat}>{cat}</option>
                       ))}
-                    </select>
+                  </select>
                   </div>
                 </div>
 
@@ -555,24 +555,24 @@ export default function HostEventPage() {
                     onChange={(value) => handleInputChange("duration", value)}
                     size="large"
                   />
-                </div>
-              </section>
+              </div>
+            </section>
 
-              {/* Location */}
-              <section className="space-y-4">
+            {/* Location */}
+            <section className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-bold text-black">Where</h2>
-                  <button
-                    type="button"
-                    onClick={getCurrentLocation}
-                    disabled={isLoadingLocation}
+                <button
+                  type="button"
+                  onClick={getCurrentLocation}
+                  disabled={isLoadingLocation}
                     className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black rounded-lg transition-colors disabled:opacity-50 text-sm font-medium"
-                  >
-                    <Navigation className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
-                    {isLoadingLocation ? 'Getting Location...' : 'Use Current Location'}
-                  </button>
-                </div>
-                
+                >
+                  <Navigation className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+                  {isLoadingLocation ? 'Getting Location...' : 'Use Current Location'}
+                </button>
+              </div>
+              
                 <Input
                   label="Address *"
                   placeholder="Meeting point or venue address"
@@ -599,19 +599,19 @@ export default function HostEventPage() {
                     required
                     size="large"
                   />
-                </div>
-              </section>
+              </div>
+            </section>
 
               {/* Participants */}
-              <section className="space-y-4">
+            <section className="space-y-4">
                 <h2 className="text-2xl font-bold text-black mb-4">Participants</h2>
-                
+              
                 <Input
                   label="Maximum Participants *"
                   type="number"
                   placeholder="10"
                   value={eventData.maxParticipants.toString()}
-                  onChange={(value) => handleInputChange("maxParticipants", parseInt(value) || 2)}
+                  onChange={(value) => handleInputChange("maxParticipants", parseInt(value) || 1)}
                   required
                   size="large"
                   prefix={<Users className="w-4 h-4" />}
@@ -632,29 +632,29 @@ export default function HostEventPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Input
+                <Input
                     label="Minimum Age (optional)"
                     type="number"
                     placeholder="18"
                     value={eventData.ageRestriction.minAge?.toString() || ""}
                     onChange={(value) => handleNestedChange("ageRestriction", "minAge", value ? parseInt(value) : undefined)}
-                    size="large"
-                  />
-                  <Input
+                  size="large"
+                />
+                <Input
                     label="Maximum Age (optional)"
                     type="number"
                     placeholder="65"
                     value={eventData.ageRestriction.maxAge?.toString() || ""}
                     onChange={(value) => handleNestedChange("ageRestriction", "maxAge", value ? parseInt(value) : undefined)}
-                    size="large"
-                  />
-                </div>
-              </section>
+                  size="large"
+                />
+              </div>
+            </section>
 
               {/* Interests & Tags */}
-              <section className="space-y-4">
+            <section className="space-y-4">
                 <h2 className="text-2xl font-bold text-black mb-4">Interests & Tags</h2>
-                
+              
                 <div>
                   <label className="block text-sm font-medium text-black mb-2">Interests (help people find your event)</label>
                   <div className="flex gap-2 mb-3">
@@ -697,12 +697,12 @@ export default function HostEventPage() {
                   onChange={(value) => handleInputChange("requirements", value)}
                   size="large"
                 />
-              </section>
+            </section>
 
-              {/* Pricing */}
-              <section className="space-y-4">
+            {/* Pricing */}
+            <section className="space-y-4">
                 <h2 className="text-2xl font-bold text-black mb-4">Pricing</h2>
-                
+              
                 <div>
                   <label className="block text-sm font-medium text-black mb-2">Price Type *</label>
                   <select
@@ -718,43 +718,43 @@ export default function HostEventPage() {
                 </div>
 
                 {eventData.priceType !== "Free" && (
-                  <Input
+                    <Input
                     label="Price (₹) *"
-                    type="number"
-                    placeholder="500"
+                      type="number"
+                      placeholder="500"
                     value={eventData.price.toString()}
                     onChange={(value) => handleInputChange("price", parseInt(value) || 0)}
                     required
-                    size="large"
+                      size="large"
                     prefix={<DollarSign className="w-4 h-4" />}
-                    prefixStyling={false}
-                  />
+                      prefixStyling={false}
+                    />
                 )}
-              </section>
+            </section>
 
               <div className="flex gap-4 justify-end pt-6 border-t">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setView("list");
+              <button
+                type="button"
+                onClick={() => {
+                  setView("list");
                     setEditingEventId(null);
-                  }}
+                }}
                   className="px-6 py-3 rounded-lg border border-gray-300 text-sm font-medium text-black hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
                   className="px-6 py-3 rounded-lg bg-black text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  {isLoading
+              >
+                {isLoading
                     ? editingEventId ? "Saving..." : "Creating..."
                     : editingEventId ? "Save Changes" : "Create Event"}
-                </button>
-              </div>
-            </form>
-          </div>
+              </button>
+            </div>
+          </form>
+        </div>
         )}
       </main>
     </div>

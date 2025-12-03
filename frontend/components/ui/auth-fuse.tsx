@@ -198,7 +198,7 @@ function SignInForm() {
 
     try {
       const response = await signIn({ email, password });
-      setAuthToken(response.access_token);
+      setAuthToken(response.token);
       router.push("/");
       router.refresh();
     } catch (err) {
@@ -243,16 +243,20 @@ function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
     setSuccess(false);
 
     const formData = new FormData(event.currentTarget);
-    const name = formData.get("name") as string;
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
     const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
 
     try {
-      await signUp({ name, email, phone, password });
+      const response = await signUp({ firstName, lastName, email, phone, password, confirmPassword });
+      setAuthToken(response.token);
       setSuccess(true);
       setTimeout(() => {
-        onSuccess?.();
+        router.push("/");
+        router.refresh();
       }, 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign up failed");
@@ -278,10 +282,14 @@ function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
         </div>
       )}
       <div className="grid gap-4">
-        <div className="grid gap-1"><Label htmlFor="name">Full Name</Label><Input id="name" name="name" type="text" placeholder="John Doe" required autoComplete="name" /></div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="grid gap-1"><Label htmlFor="firstName">First Name</Label><Input id="firstName" name="firstName" type="text" placeholder="John" required autoComplete="given-name" /></div>
+          <div className="grid gap-1"><Label htmlFor="lastName">Last Name</Label><Input id="lastName" name="lastName" type="text" placeholder="Doe" required autoComplete="family-name" /></div>
+        </div>
         <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" /></div>
         <div className="grid gap-2"><Label htmlFor="phone">Phone Number</Label><Input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required autoComplete="tel" /></div>
-        <PasswordInput name="password" label="Password" required autoComplete="new-password" placeholder="Password"/>
+        <PasswordInput name="password" label="Password" required autoComplete="new-password" placeholder="Password (min 8 characters)"/>
+        <PasswordInput name="confirmPassword" label="Confirm Password" required autoComplete="new-password" placeholder="Confirm Password"/>
         <Button type="submit" variant="outline" className="mt-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600" disabled={isLoading || success}>
           {isLoading ? "Signing up..." : success ? "Success!" : "Sign Up"}
         </Button>

@@ -61,9 +61,7 @@ const eventSchema = new mongoose.Schema({
   },
   maxParticipants: {
     type: Number,
-    required: true,
-    min: 2,
-    max: 100
+    required: true
   },
   currentParticipants: {
     type: Number,
