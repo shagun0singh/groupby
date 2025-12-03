@@ -44,7 +44,7 @@ export default function Home() {
         <div className="absolute inset-0 flex items-center justify-center">
           
           {/* Bento Grid Container */}
-          <div className="relative" style={{ width: '1600px', height: '800px' }}>
+          <div className="relative" style={{ width: '1200px', height: '600px' }}>
             
             {/* 1. Yellow Events - Far Left */}
             <div 
@@ -139,49 +139,46 @@ export default function Home() {
                 <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces" alt="Community member" fill className="object-cover" />
               </div>
 
-              {/* White Hero Card - LARGE OVERLAPPING DESIGN */}
+              {/* White Hero Card - EXACT FIGMA MATCH */}
               <div 
                 className="absolute bg-white shadow-2xl"
                 style={{
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: '1400px',
-                  maxWidth: '95vw',
-                  height: '580px',
-                  padding: '100px 140px',
-                  borderRadius: '64px',
-                  zIndex: 50,
+                  width: '1020px',
+                  maxWidth: '90vw',
+                  padding: '100px 120px',
+                  borderRadius: '48px',
+                  zIndex: 10,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'flex-start',
-                  justifyContent: 'space-between',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                  justifyContent: 'space-between'
                 }}
               >
                 <h1 style={{ 
-                  fontSize: '120px', 
+                  fontSize: '96px', 
                   fontWeight: '400', 
-                  lineHeight: '1.1',
+                  lineHeight: '1',
                   textAlign: 'left',
                   color: '#000',
                   margin: '0',
-                  letterSpacing: '-0.025em',
+                  letterSpacing: '-0.02em',
                   fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-                  width: '100%',
-                  maxWidth: '900px'
+                  width: '100%'
                 }}>
                   Make this design move
                 </h1>
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '80px' }}>
                   <Link
                     href="/events"
                     style={{ 
                       background: '#6366F1',
                       color: '#fff',
-                      padding: '22px 64px',
+                      padding: '20px 56px',
                       borderRadius: '16px',
-                      fontSize: '22px',
+                      fontSize: '20px',
                       fontWeight: '600',
                       textDecoration: 'none',
                       display: 'inline-block',
