@@ -15,7 +15,7 @@ export default function Home() {
 
   return (
     <div className="relative w-full min-h-screen bg-[#F7F7F7]">
-      <header className="fixed top-0 left-0 right-0 z-[100] bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
           GroupBy
         </Link>
