@@ -24,7 +24,7 @@ interface InputProps {
   onChange?: (value: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  ref?: React.RefObject<HTMLInputElement | null>;
+  ref?: React.Ref<HTMLInputElement>;
   className?: string;
   wrapperClassName?: string;
   // Allow arbitrary HTML input props without using `any`
@@ -68,7 +68,7 @@ export const Input = ({
   }, [value]);
 
   return (
-    <div className="flex flex-col gap-2" onClick={() => _ref.current?.focus()}>
+    <div className="flex flex-col gap-2" onClick={() => internalRef.current?.focus()}>
       {label && (
         <div className="capitalize text-[13px] text-black">
           {label}
@@ -106,7 +106,7 @@ export const Input = ({
           onChange={_onChange}
           onFocus={onFocus}
           onBlur={onBlur}
-          ref={_ref}
+          ref={internalRef}
           {...rest}
         />
         {suffix && (

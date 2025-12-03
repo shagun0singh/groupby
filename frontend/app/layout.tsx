@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Caveat_Brush, Audiowide } from "next/font/google";
+import { Inter, Caveat_Brush, Audiowide } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
+const inter = Inter({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
+const interMono = Inter({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const caveatBrush = Caveat_Brush({
@@ -37,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${caveatBrush.variable} ${audiowide.variable} antialiased`}
+        className={`${inter.variable} ${interMono.variable} ${caveatBrush.variable} ${audiowide.variable} antialiased`}
       >
         {children}
       </body>
