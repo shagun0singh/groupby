@@ -14,7 +14,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative w-full min-h-screen bg-[#F7F7F7]">
+    <div className="relative w-full min-h-screen bg-[#F7F7F7] flex flex-col">
       <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
           GroupBy
@@ -38,7 +38,10 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative w-full h-screen flex items-center justify-center overflow-hidden">
+      <main
+        className="relative w-full flex-1 flex items-center justify-center overflow-hidden"
+        style={{ minHeight: 'calc(100vh - 40px)' }}
+      >
         <div className="absolute top-[90px] left-[40px] w-[150px] h-[150px] rounded-xl overflow-hidden shadow-lg">
           <Image src="https://images.unsplash.com/photo-1618609378039-b572f64c5b42?w=225&h=225&fit=crop" alt="" width={150} height={150} className="object-cover" />
         </div>
@@ -109,6 +112,34 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      <footer className="relative z-50 w-full bg-gradient-to-b from-[#E6F0FF] to-[#F5F7FF] border-t border-[#D0E0FF]">
+        <div className="max-w-7xl mx-auto px-6 py-8 text-center">
+          <Link href="/" className="inline-flex items-center justify-center gap-3 mb-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#0066FF] to-[#004FCC] rounded-2xl flex items-center justify-center shadow-md">
+              <span className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-caveat-brush)' }}>GB</span>
+            </div>
+            <span className="text-lg font-semibold text-gray-800" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
+              GroupBy
+            </span>
+          </Link>
+          
+          <p className="text-sm text-gray-700 max-w-2xl mx-auto mb-0.5 leading-relaxed">
+            Connecting communities through meaningful local events.
+          </p>
+          <p className="text-sm text-gray-700 max-w-2xl mx-auto leading-relaxed">
+            Discover workshops, meetups, and gatherings that bring people together.
+          </p>
+        </div>
+        
+        <div className="border-t border-[#D0E0FF] bg-[#EDF3FF]">
+          <div className="max-w-7xl mx-auto px-6 py-3 text-center">
+            <p className="text-sm text-gray-600">
+              GroupBy ©2025. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
