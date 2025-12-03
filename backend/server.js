@@ -22,6 +22,9 @@ mongoose.connect(mongoURI)
 });
 
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/fests', require('./routes/fests'));
+app.use('/api/registrations', require('./routes/registrations'));
+app.use('/api/location', require('./routes/location'));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'GroupBy API is running' });

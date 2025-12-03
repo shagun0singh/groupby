@@ -69,7 +69,7 @@ router.patch("/:id/cancel", authenticate, async (req, res, next) => {
     registration.status = 'cancelled';
     await registration.save();
     
-    const Fest = (await import("../models/Fest.js")).default;
+    const Fest = require('../models/Fest');
     await Fest.findByIdAndUpdate(registration.fest, {
       $inc: { registrationsCount: -1 }
     });

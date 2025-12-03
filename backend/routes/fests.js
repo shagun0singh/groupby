@@ -246,5 +246,5 @@ router.get("/:id/registrations", authenticate, async (req, res, next) => {
   }
 });
 
-export default router;
+module.exports = router;
 

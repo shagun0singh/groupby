@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const JWT_SECRET = process.env.SECRET_KEY || 'your-secret-key-change-this-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SECRET_KEY || 'your-secret-key-change-this-in-production';
 
 async function authenticate(req, res, next) {
   try {
