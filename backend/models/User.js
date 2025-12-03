@@ -79,7 +79,6 @@ const userSchema = new mongoose.Schema(
         trim: true
       }
     },
-    // Host-specific fields
     hostProfile: {
       verified: {
         type: Boolean,
@@ -110,7 +109,6 @@ const userSchema = new mongoose.Schema(
         website: String
       }
     },
-    // User stats
     stats: {
       eventsAttended: {
         type: Number,

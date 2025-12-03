@@ -49,13 +49,11 @@ const participantSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Compound index to ensure one user can only apply once per event
 participantSchema.index({ user: 1, event: 1 }, { unique: true });
 participantSchema.index({ event: 1, status: 1 });
 participantSchema.index({ user: 1, status: 1 });
 participantSchema.index({ createdAt: -1 });
 
-// Update event participant count when status changes
 participantSchema.post('save', async function() {
   const Event = mongoose.model('Event');
   const event = await Event.findById(this.event);
@@ -71,7 +69,6 @@ participantSchema.post('save', async function() {
   }
 });
 
-// Also update count when participant is removed
 participantSchema.post('remove', async function() {
   const Event = mongoose.model('Event');
   const event = await Event.findById(this.event);

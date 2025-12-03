@@ -4,7 +4,7 @@ const locationSchema = new mongoose.Schema({
   address: { type: String, required: true },
   city: { type: String, required: true },
   state: { type: String, required: true },
-  coordinates: { type: [Number], default: null } // [longitude, latitude]
+  coordinates: { type: [Number], default: null }
 }, { _id: false });
 
 const eventSchema = new mongoose.Schema({
@@ -26,8 +26,7 @@ const eventSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: true,
-    // Examples: Photography, Cooking, Gaming, Fitness, Book Club, etc.
+    required: true
   },
   description: {
     type: String,
@@ -57,7 +56,7 @@ const eventSchema = new mongoose.Schema({
   },
   duration: {
     type: String,
-    default: null // e.g., "2 hours", "Half day"
+    default: null
   },
   maxParticipants: {
     type: Number,
@@ -98,7 +97,7 @@ const eventSchema = new mongoose.Schema({
   },
   requirements: {
     type: String,
-    default: null // What participants need to bring/know
+    default: null
   },
   ageRestriction: {
     minAge: { type: Number, default: null },
@@ -113,7 +112,6 @@ const eventSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes for efficient queries
 eventSchema.index({ slug: 1 }, { unique: true });
 eventSchema.index({ hostedBy: 1 });
 eventSchema.index({ date: 1 });
@@ -123,7 +121,6 @@ eventSchema.index({ 'location.city': 1 });
 eventSchema.index({ status: 1 });
 eventSchema.index({ createdAt: -1 });
 
-// Auto-update status based on participants
 eventSchema.pre('save', function(next) {
   if (this.currentParticipants >= this.maxParticipants) {
     this.status = 'full';

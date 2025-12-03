@@ -5,7 +5,6 @@ const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get all events with filters
 router.get("/", async (req, res, next) => {
   try {
     const { skip = 0, limit = 20, category, type, city, interests, search } = req.query;
@@ -56,7 +55,6 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// Get single event by slug
 router.get("/:slug", async (req, res, next) => {
   try {
     const { slug } = req.params;
@@ -76,7 +74,6 @@ router.get("/:slug", async (req, res, next) => {
   }
 });
 
-// Create new event (requires authentication)
 router.post("/", authenticate, async (req, res, next) => {
   try {
     const eventData = {
@@ -84,7 +81,6 @@ router.post("/", authenticate, async (req, res, next) => {
       hostedBy: req.user._id
     };
     
-    // Generate slug from title
     if (!eventData.slug) {
       eventData.slug = eventData.title
         .toLowerCase()
@@ -92,7 +88,6 @@ router.post("/", authenticate, async (req, res, next) => {
         .replace(/(^-|-$)/g, '');
     }
     
-    // Check for duplicate slug
     const existingEvent = await Event.findOne({ slug: eventData.slug });
     if (existingEvent) {
       eventData.slug = `${eventData.slug}-${Date.now()}`;

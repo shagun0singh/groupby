@@ -5,7 +5,6 @@ const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Apply to join an event
 router.post("/apply", authenticate, async (req, res, next) => {
   try {
     const { eventId, applicationMessage } = req.body;
@@ -18,21 +17,18 @@ router.post("/apply", authenticate, async (req, res, next) => {
       });
     }
     
-    // Check if event is open
     if (event.status !== 'open') {
       return res.status(400).json({
         message: "This event is not accepting applications"
       });
     }
     
-    // Check if user is the host
     if (event.hostedBy.toString() === req.user._id.toString()) {
       return res.status(400).json({
         message: "You cannot apply to your own event"
       });
     }
     
-    // Check if already applied
     const existingApplication = await Participant.findOne({
       user: req.user._id,
       event: eventId
@@ -44,7 +40,6 @@ router.post("/apply", authenticate, async (req, res, next) => {
       });
     }
     
-    // Create participant application
     const participant = new Participant({
       user: req.user._id,
       event: eventId,
@@ -69,7 +64,6 @@ router.post("/apply", authenticate, async (req, res, next) => {
   }
 });
 
-// Get my applications
 router.get("/my-applications", authenticate, async (req, res, next) => {
   try {
     const applications = await Participant.find({ user: req.user._id })
@@ -82,7 +76,6 @@ router.get("/my-applications", authenticate, async (req, res, next) => {
   }
 });
 
-// Approve participant (host only)
 router.patch("/:id/approve", authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -96,14 +89,12 @@ router.patch("/:id/approve", authenticate, async (req, res, next) => {
       });
     }
     
-    // Check if user is the host
     if (participant.event.hostedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         message: "You don't have permission to approve this application"
       });
     }
     
-    // Check if event is full
     if (participant.event.currentParticipants >= participant.event.maxParticipants) {
       return res.status(400).json({
         message: "Event is already full"
@@ -128,7 +119,6 @@ router.patch("/:id/approve", authenticate, async (req, res, next) => {
   }
 });
 
-// Reject participant (host only)
 router.patch("/:id/reject", authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -166,7 +156,6 @@ router.patch("/:id/reject", authenticate, async (req, res, next) => {
   }
 });
 
-// Cancel application (user only)
 router.patch("/:id/cancel", authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -198,7 +187,6 @@ router.patch("/:id/cancel", authenticate, async (req, res, next) => {
   }
 });
 
-// Rate event after attendance
 router.patch("/:id/rate", authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -230,7 +218,6 @@ router.patch("/:id/rate", authenticate, async (req, res, next) => {
     
     await participant.save();
     
-    // Update host rating
     const Event = require('../models/Event');
     const User = require('../models/User');
     
