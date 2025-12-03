@@ -139,51 +139,49 @@ export default function Home() {
                 <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces" alt="Community member" fill className="object-cover" />
               </div>
 
-              {/* White Hero Card - EXACT FIGMA MATCH */}
+              {/* White Hero Card - PROMINENT CENTER */}
               <div 
-                className="absolute bg-white shadow-2xl"
+                className="absolute bg-white"
                 style={{
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: '1020px',
-                  maxWidth: '90vw',
-                  padding: '100px 120px',
+                  width: '1100px',
+                  height: '500px',
+                  padding: '80px 100px',
                   borderRadius: '48px',
-                  zIndex: 10,
+                  zIndex: 100,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'flex-start',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)'
                 }}
               >
                 <h1 style={{ 
-                  fontSize: '96px', 
+                  fontSize: '88px', 
                   fontWeight: '400', 
-                  lineHeight: '1',
+                  lineHeight: '1.1',
                   textAlign: 'left',
                   color: '#000',
                   margin: '0',
                   letterSpacing: '-0.02em',
-                  fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-                  width: '100%'
+                  fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
                 }}>
                   Make this design move
                 </h1>
-                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '80px' }}>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
                   <Link
                     href="/events"
                     style={{ 
                       background: '#6366F1',
                       color: '#fff',
-                      padding: '20px 56px',
-                      borderRadius: '16px',
-                      fontSize: '20px',
+                      padding: '18px 52px',
+                      borderRadius: '14px',
+                      fontSize: '19px',
                       fontWeight: '600',
                       textDecoration: 'none',
-                      display: 'inline-block',
-                      transition: 'all 0.2s ease',
-                      boxShadow: 'none'
+                      display: 'inline-block'
                     }}
                   >
                     Get started
