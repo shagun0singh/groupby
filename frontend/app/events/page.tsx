@@ -74,12 +74,12 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen relative bg-white">
       
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5 gap-6">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
         <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
           GroupBy
         </Link>
         
-        <div className="flex-1 max-w-md">
+        <div className="flex-1 max-w-md mx-6">
           <SuggestiveSearch
             suggestions={[
               "Search for workshops",
@@ -93,19 +93,19 @@ export default function EventsPage() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          <nav className="hidden md:flex gap-6 text-base">
-            <Link href="/" className="text-black hover:text-gray-800 transition-colors pb-1 hover:border-b-2 hover:border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
+        <div className="flex items-center gap-6">
+          <nav className="hidden md:flex gap-6 text-sm font-medium">
+            <Link href="/" className="text-gray-700 hover:text-black transition-colors">
               Home
             </Link>
-            <Link href="/events" className="text-black hover:text-gray-800 transition-colors pb-1 border-b-2 border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
+            <Link href="/events" className="text-black transition-colors">
               Discover
             </Link>
-            <Link href="/host" className="text-black hover:text-gray-800 transition-colors pb-1 hover:border-b-2 hover:border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
+            <Link href="/host" className="text-gray-700 hover:text-black transition-colors">
               Host Event
             </Link>
             {!isLoggedIn && (
-              <Link href="/login" className="text-black hover:text-gray-800 transition-colors pb-1 hover:border-b-2 hover:border-black" style={{ fontFamily: 'var(--font-audiowide)' }}>
+              <Link href="/login" className="text-gray-700 hover:text-black transition-colors">
                 Login
               </Link>
             )}

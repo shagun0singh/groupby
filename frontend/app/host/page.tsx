@@ -264,7 +264,7 @@ export default function HostEventPage() {
             <Link href="/events" className="text-gray-700 hover:text-black transition-colors">
               Discover
             </Link>
-            <Link href="/host" className="text-black border-b-2 border-black">
+            <Link href="/host" className="text-black transition-colors">
               Host Event
             </Link>
             {!isLoggedIn && (
