@@ -46,7 +46,7 @@ export default function Home() {
           {/* Bento Grid Container */}
           <div className="relative" style={{ width: '1200px', height: '600px' }}>
             
-            {/* 1. Yellow WORK'S - Far Left */}
+            {/* 1. Yellow Events - Far Left */}
             <div 
               className="absolute shadow-2xl overflow-hidden"
               style={{
@@ -58,20 +58,22 @@ export default function Home() {
                 zIndex: 1
               }}
             >
-              <div style={{ padding: '36px 28px' }}>
+              <div style={{ padding: '36px 28px', display: 'flex', alignItems: 'center', height: '100%' }}>
                 <div style={{ 
-                  fontSize: '64px', 
+                  fontSize: '54px', 
                   fontWeight: '900', 
-                  lineHeight: '0.8',
+                  lineHeight: '1',
                   fontFamily: 'Impact, sans-serif',
-                  color: '#000'
+                  color: '#000',
+                  transform: 'rotate(-90deg)',
+                  whiteSpace: 'nowrap'
                 }}>
-                  WORK'S
+                  CONNECT
                 </div>
               </div>
             </div>
 
-            {/* 2. Black collective - Left */}
+            {/* 2. Black Community - Left */}
             <div 
               className="absolute shadow-2xl"
               style={{
@@ -84,27 +86,27 @@ export default function Home() {
               }}
             >
               <div style={{ padding: '36px' }}>
-                <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '14px', marginBottom: '32px', fontWeight: '300' }}>
-                  collective
+                <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: '18px', marginBottom: '32px', fontWeight: '500', letterSpacing: '0.05em' }}>
+                  Community
                 </div>
                 
-                {/* Grid 8x8 */}
+                {/* Grid 8x8 - represents diverse community */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '5px' }}>
                   {Array.from({ length: 64 }).map((_, i) => (
-                    <div key={i} style={{ aspectRatio: '1', background: 'rgba(255,255,255,0.04)', borderRadius: '3px' }}></div>
+                    <div key={i} style={{ aspectRatio: '1', background: `rgba(255,255,255,${Math.random() * 0.15 + 0.05})`, borderRadius: '3px' }}></div>
                   ))}
                 </div>
               </div>
               
-              {/* Bottom images */}
+              {/* Bottom images - community events */}
               <div className="absolute" style={{ bottom: '36px', left: '36px', width: '110px', height: '75px', borderRadius: '16px', overflow: 'hidden' }}>
-                <Image src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=150&fit=crop" alt="" fill className="object-cover" />
+                <Image src="https://images.unsplash.com/photo-1528605105345-5344ea20e269?w=200&h=150&fit=crop" alt="Workshop" fill className="object-cover" />
               </div>
               
               <div className="absolute" style={{ bottom: '36px', right: '36px', width: '170px', height: '170px', borderRadius: '20px', overflow: 'hidden' }}>
-                <Image src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=250&h=250&fit=crop" alt="" fill className="object-cover" />
-                <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '9px', color: '#fff', background: 'rgba(0,0,0,0.7)', padding: '4px 8px', borderRadius: '6px' }}>
-                  • Geological Formation Study
+                <Image src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=250&h=250&fit=crop" alt="Meetup" fill className="object-cover" />
+                <div style={{ position: 'absolute', bottom: '10px', left: '10px', fontSize: '10px', color: '#fff', background: 'rgba(0,0,0,0.7)', padding: '5px 10px', borderRadius: '6px', fontWeight: '500' }}>
+                  • Local Meetups
                 </div>
               </div>
             </div>
@@ -132,9 +134,9 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Top right circle */}
-              <div className="absolute" style={{ top: '40px', right: '40px', width: '130px', height: '130px', borderRadius: '50%', overflow: 'hidden', border: '6px solid rgba(255,255,255,0.2)' }}>
-                <Image src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=200&h=200&fit=crop" alt="" fill className="object-cover" />
+              {/* Top right circle - Community member */}
+              <div className="absolute" style={{ top: '40px', right: '40px', width: '130px', height: '130px', borderRadius: '50%', overflow: 'hidden', border: '6px solid rgba(255,255,255,0.3)', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
+                <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces" alt="Community member" fill className="object-cover" />
               </div>
 
               {/* White Hero Card - CENTERED */}
@@ -144,49 +146,82 @@ export default function Home() {
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
-                  width: '850px',
-                  padding: '56px 100px',
-                  borderRadius: '48px',
+                  width: '900px',
+                  maxWidth: '90vw',
+                  padding: '64px 80px',
+                  borderRadius: '40px',
                   zIndex: 10
                 }}
               >
-                <h1 style={{ 
-                  fontSize: '64px', 
-                  fontWeight: '700', 
-                  lineHeight: '1',
-                  textAlign: 'center',
-                  color: '#000',
-                  marginBottom: '40px'
-                }}>
-                  Make this design move
-                </h1>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <Link
-                    href="/events"
-                    style={{ 
-                      background: '#5B5FEF',
-                      color: '#fff',
-                      padding: '18px 56px',
-                      borderRadius: '14px',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      textDecoration: 'none',
-                      display: 'inline-block'
-                    }}
-                  >
-                    Get started
-                  </Link>
+                <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+                  <h1 style={{ 
+                    fontSize: '56px', 
+                    fontWeight: '800', 
+                    lineHeight: '1.15',
+                    textAlign: 'center',
+                    color: '#000',
+                    marginBottom: '24px',
+                    letterSpacing: '-0.02em'
+                  }}>
+                    Turn Ideas Into Real Connections
+                  </h1>
+                  <p style={{
+                    fontSize: '20px',
+                    lineHeight: '1.6',
+                    textAlign: 'center',
+                    color: '#666',
+                    marginBottom: '40px',
+                    fontWeight: '400'
+                  }}>
+                    Discover local events and build meaningful connections. Join workshops, meetups, and community gatherings tailored to your interests.
+                  </p>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                    <Link
+                      href="/events"
+                      style={{ 
+                        background: '#5B5FEF',
+                        color: '#fff',
+                        padding: '16px 40px',
+                        borderRadius: '12px',
+                        fontSize: '17px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        display: 'inline-block',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 4px 12px rgba(91, 95, 239, 0.25)'
+                      }}
+                    >
+                      Discover Events
+                    </Link>
+                    <Link
+                      href="/host"
+                      style={{ 
+                        background: '#fff',
+                        color: '#5B5FEF',
+                        padding: '16px 40px',
+                        borderRadius: '12px',
+                        fontSize: '17px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        display: 'inline-block',
+                        border: '2px solid #5B5FEF',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      Host an Event
+                    </Link>
+                  </div>
                 </div>
               </div>
 
-              {/* Bottom left circle */}
-              <div className="absolute" style={{ bottom: '40px', left: '40px', width: '150px', height: '150px', borderRadius: '50%', overflow: 'hidden', border: '6px solid rgba(255,255,255,0.2)' }}>
-                <Image src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=250&h=250&fit=crop" alt="" fill className="object-cover" />
+              {/* Bottom left circle - Community member */}
+              <div className="absolute" style={{ bottom: '40px', left: '40px', width: '150px', height: '150px', borderRadius: '50%', overflow: 'hidden', border: '6px solid rgba(255,255,255,0.3)', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}>
+                <Image src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=250&h=250&fit=crop&crop=faces" alt="Community member" fill className="object-cover" />
               </div>
 
-              {/* Bottom right corner */}
+              {/* Bottom right corner - Event photo */}
               <div className="absolute" style={{ bottom: '0', right: '0', width: '190px', height: '170px', borderTopLeftRadius: '28px', overflow: 'hidden' }}>
-                <Image src="https://images.unsplash.com/photo-1545486332-9e0999c535b2?w=300&h=250&fit=crop" alt="" fill className="object-cover" />
+                <Image src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=300&h=250&fit=crop" alt="Community gathering" fill className="object-cover" />
               </div>
 
               {/* Plus button */}
@@ -195,7 +230,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 4. Purple A/REPS - Right */}
+            {/* 4. Purple Events Gallery - Right */}
             <div 
               className="absolute shadow-2xl"
               style={{
@@ -209,30 +244,30 @@ export default function Home() {
             >
               <div style={{ padding: '32px 28px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', letterSpacing: '0.1em' }}>A/REPS</div>
-                  <div style={{ display: 'flex', gap: '14px', fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
-                    <span>Artists</span>
-                    <span>Categories</span>
-                    <span>Contact</span>
+                  <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '15px', letterSpacing: '0.05em', fontWeight: '600' }}>EVENTS</div>
+                  <div style={{ display: 'flex', gap: '12px', fontSize: '11px', color: 'rgba(255,255,255,0.6)', fontWeight: '500' }}>
+                    <span>Tech</span>
+                    <span>Art</span>
+                    <span>Music</span>
                   </div>
                 </div>
                 
-                {/* Image grid */}
+                {/* Image grid - event photos */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                   <div className="relative" style={{ height: '130px', borderRadius: '14px', overflow: 'hidden' }}>
-                    <Image src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=200&h=200&fit=crop" alt="" fill className="object-cover" />
+                    <Image src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=200&h=200&fit=crop" alt="Tech Workshop" fill className="object-cover" />
                   </div>
                   <div className="relative" style={{ height: '130px', borderRadius: '14px', overflow: 'hidden' }}>
-                    <Image src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=200&h=200&fit=crop" alt="" fill className="object-cover" />
+                    <Image src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=200&h=200&fit=crop" alt="Team Building" fill className="object-cover" />
                   </div>
                 </div>
 
                 <div className="relative" style={{ height: '190px', borderRadius: '14px', overflow: 'hidden', marginBottom: '14px' }}>
-                  <Image src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=300&fit=crop" alt="" fill className="object-cover" />
+                  <Image src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=300&fit=crop" alt="Community Event" fill className="object-cover" />
                 </div>
 
                 <div className="relative" style={{ height: '90px', borderRadius: '14px', overflow: 'hidden' }}>
-                  <Image src="https://images.unsplash.com/photo-1485178575877-1a13bf489dfe?w=400&h=150&fit=crop" alt="" fill className="object-cover" />
+                  <Image src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=150&fit=crop" alt="Networking" fill className="object-cover" />
                 </div>
               </div>
             </div>
@@ -250,27 +285,27 @@ export default function Home() {
               }}
             >
               <div style={{ padding: '32px 24px' }}>
-                <div style={{ fontSize: '11px', color: '#3D1B5C', marginBottom: '28px', fontWeight: '500' }}>@Alex Carter</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <div style={{ fontSize: '12px', color: '#3D1B5C', marginBottom: '28px', fontWeight: '600', letterSpacing: '0.02em' }}>This Month</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   <div>
-                    <div style={{ fontSize: '22px', fontWeight: '700', color: '#000' }}>Editorial</div>
-                    <div style={{ fontSize: '10px', color: 'rgba(0,0,0,0.5)', marginTop: '4px' }}>24</div>
+                    <div style={{ fontSize: '28px', fontWeight: '800', color: '#3D1B5C' }}>150+</div>
+                    <div style={{ fontSize: '11px', color: 'rgba(0,0,0,0.6)', marginTop: '4px', fontWeight: '500' }}>Active Events</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '22px', fontWeight: '700', color: '#000' }}>Commercial</div>
-                    <div style={{ fontSize: '10px', color: 'rgba(0,0,0,0.5)', marginTop: '4px' }}>22</div>
+                    <div style={{ fontSize: '28px', fontWeight: '800', color: '#3D1B5C' }}>2.5K</div>
+                    <div style={{ fontSize: '11px', color: 'rgba(0,0,0,0.6)', marginTop: '4px', fontWeight: '500' }}>Participants</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '22px', fontWeight: '700', color: '#000' }}>Personal</div>
-                    <div style={{ fontSize: '10px', color: 'rgba(0,0,0,0.5)', marginTop: '4px' }}>16</div>
+                    <div style={{ fontSize: '28px', fontWeight: '800', color: '#3D1B5C' }}>500+</div>
+                    <div style={{ fontSize: '11px', color: 'rgba(0,0,0,0.6)', marginTop: '4px', fontWeight: '500' }}>Connections</div>
                   </div>
                 </div>
               </div>
 
               <div className="absolute" style={{ bottom: '0', left: '0', right: '0', height: '130px', borderBottomLeftRadius: '28px', overflow: 'hidden' }}>
-                <Image src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=250&h=200&fit=crop" alt="" fill className="object-cover" />
-                <div style={{ position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }}></div>
-                <div style={{ position: 'absolute', bottom: '16px', left: '16px', color: '#fff', fontSize: '19px', fontWeight: '700' }}>Editorial</div>
+                <Image src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=250&h=200&fit=crop" alt="Community" fill className="object-cover" />
+                <div style={{ position: 'absolute', inset: '0', background: 'linear-gradient(to top, rgba(61, 27, 92, 0.8), transparent)' }}></div>
+                <div style={{ position: 'absolute', bottom: '16px', left: '16px', color: '#fff', fontSize: '16px', fontWeight: '700' }}>Join Us</div>
               </div>
             </div>
 
