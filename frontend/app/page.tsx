@@ -199,7 +199,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 4. Purple Events Gallery - Right */}
             <div 
               className="absolute shadow-2xl"
               style={{
