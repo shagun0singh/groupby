@@ -8,6 +8,8 @@ export function GoogleAuthProvider({ children }: { children: React.ReactNode }) 
 
   if (!clientId) {
     console.warn("⚠️ NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set. Google OAuth will not work.");
+    // Return children without GoogleOAuthProvider if no client ID
+    return <>{children}</>;
   }
 
   return (
