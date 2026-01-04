@@ -8,9 +8,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Eye, EyeOff } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { signUp, signIn, setAuthToken } from "@/lib/api";
+import { useGoogleLogin } from "@react-oauth/google";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -90,7 +88,7 @@ export function Typewriter({
 }
 
 const labelVariants = cva(
-  "text-sm font-medium leading-none text-black peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 );
 
 const Label = React.forwardRef<
@@ -107,13 +105,13 @@ const Label = React.forwardRef<
 Label.displayName = LabelPrimitive.Root.displayName;
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium cursor-pointer ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input dark:border-input/50 bg-white hover:bg-gray-50 hover:text-foreground",
+        outline: "border border-input dark:border-input/50 bg-background hover:bg-accent hover:text-accent-foreground",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary-foreground/60 underline-offset-4 hover:underline",
@@ -148,7 +146,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       <input
         type={type}
         className={cn(
-          "flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm text-gray-900 shadow-sm shadow-black/5 transition-shadow placeholder:text-gray-500/80 focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/20 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-10 w-full rounded-lg border border-input dark:border-input/50 bg-background px-3 py-3 text-sm text-foreground shadow-sm shadow-black/5 transition-shadow placeholder:text-muted-foreground/70 focus-visible:bg-accent focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={ref}
@@ -172,7 +170,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
         {label && <Label htmlFor={id}>{label}</Label>}
         <div className="relative">
           <Input id={id} type={showPassword ? "text" : "password"} className={cn("pe-10", className)} ref={ref} {...props} />
-          <button type="button" onClick={togglePasswordVisibility} className="absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center text-gray-500 transition-colors hover:text-gray-700 focus-visible:text-gray-700 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50" aria-label={showPassword ? "Hide password" : "Show password"}>
+          <button type="button" onClick={togglePasswordVisibility} className="absolute inset-y-0 end-0 flex h-full w-10 items-center justify-center text-muted-foreground/80 transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50" aria-label={showPassword ? "Hide password" : "Show password"}>
             {showPassword ? (<EyeOff className="size-4" aria-hidden="true" />) : (<Eye className="size-4" aria-hidden="true" />)}
           </button>
         </div>
@@ -183,131 +181,109 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
 PasswordInput.displayName = "PasswordInput";
 
 function SignInForm() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    try {
-      const response = await signIn({ email, password });
-      setAuthToken(response.token);
-      router.push("/");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign in failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  const handleSignIn = (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault(); console.log("UI: Sign In form submitted"); };
   return (
     <form onSubmit={handleSignIn} autoComplete="on" className="flex flex-col gap-8">
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold text-black">Sign in to your account</h1>
-        <p className="text-balance text-sm text-gray-600">Enter your email below to sign in</p>
+        <h1 className="text-2xl font-bold">Sign in to your account</h1>
+        <p className="text-balance text-sm text-muted-foreground">Enter your email below to sign in</p>
       </div>
-      {error && (
-        <div className="text-sm text-red-500 text-center bg-red-50 dark:bg-red-900/20 p-3 rounded">
-          {error}
-        </div>
-      )}
       <div className="grid gap-4">
         <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" /></div>
         <PasswordInput name="password" label="Password" required autoComplete="current-password" placeholder="Password" />
-        <Button type="submit" variant="outline" className="mt-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign In"}
-        </Button>
+        <Button type="submit" variant="outline" className="mt-2">Sign In</Button>
       </div>
     </form>
   );
 }
 
-function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
-    setSuccess(false);
-
-    const formData = new FormData(event.currentTarget);
-    const firstName = formData.get("firstName") as string;
-    const lastName = formData.get("lastName") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const password = formData.get("password") as string;
-    const confirmPassword = formData.get("confirmPassword") as string;
-
-    try {
-      const response = await signUp({ firstName, lastName, email, phone, password, confirmPassword });
-      setAuthToken(response.token);
-      setSuccess(true);
-      setTimeout(() => {
-        router.push("/");
-        router.refresh();
-      }, 1500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign up failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+function SignUpForm() {
+  const handleSignUp = (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault(); console.log("UI: Sign Up form submitted"); };
   return (
     <form onSubmit={handleSignUp} autoComplete="on" className="flex flex-col gap-8">
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold text-black">Create an account</h1>
-        <p className="text-balance text-sm text-gray-600">Enter your details below to sign up</p>
+        <h1 className="text-2xl font-bold">Create an account</h1>
+        <p className="text-balance text-sm text-muted-foreground">Enter your details below to sign up</p>
       </div>
-      {error && (
-        <div className="text-sm text-red-500 text-center bg-red-50 dark:bg-red-900/20 p-3 rounded">
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="text-sm text-green-600 text-center bg-green-50 dark:bg-green-900/20 p-3 rounded">
-          Account created successfully! Redirecting to sign in...
-        </div>
-      )}
       <div className="grid gap-4">
-        <div className="grid grid-cols-2 gap-2">
-          <div className="grid gap-1"><Label htmlFor="firstName">First Name</Label><Input id="firstName" name="firstName" type="text" placeholder="John" required autoComplete="given-name" /></div>
-          <div className="grid gap-1"><Label htmlFor="lastName">Last Name</Label><Input id="lastName" name="lastName" type="text" placeholder="Doe" required autoComplete="family-name" /></div>
-        </div>
+        <div className="grid gap-1"><Label htmlFor="name">Full Name</Label><Input id="name" name="name" type="text" placeholder="John Doe" required autoComplete="name" /></div>
         <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" /></div>
-        <div className="grid gap-2"><Label htmlFor="phone">Phone Number</Label><Input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required autoComplete="tel" /></div>
-        <PasswordInput name="password" label="Password" required autoComplete="new-password" placeholder="Password (min 8 characters)"/>
-        <PasswordInput name="confirmPassword" label="Confirm Password" required autoComplete="new-password" placeholder="Confirm Password"/>
-        <Button type="submit" variant="outline" className="mt-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600" disabled={isLoading || success}>
-          {isLoading ? "Signing up..." : success ? "Success!" : "Sign Up"}
-        </Button>
+        <PasswordInput name="password" label="Password" required autoComplete="new-password" placeholder="Password"/>
+        <Button type="submit" variant="outline" className="mt-2">Sign Up</Button>
       </div>
     </form>
   );
 }
 
 function AuthFormContainer({ isSignIn, onToggle }: { isSignIn: boolean; onToggle: () => void; }) {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleGoogleLogin = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            setIsLoading(true);
+            try {
+                // Send the access token to your backend
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+                console.log('🔄 Sending Google token to backend:', apiUrl);
+                
+                const response = await fetch(`${apiUrl}/api/auth/google`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        access_token: tokenResponse.access_token,
+                    }),
+                });
+
+                console.log('📡 Backend response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    // Store the JWT token from your backend
+                    localStorage.setItem('auth_token', data.token);
+                    console.log('✅ Google login successful:', data);
+                    // Redirect to events page or dashboard
+                    window.location.href = '/events';
+                } else {
+                    const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                    console.error('❌ Backend authentication failed:', response.status, errorData);
+                    alert(`Backend error (${response.status}): ${errorData.message || 'Authentication failed'}`);
+                }
+            } catch (error: any) {
+                console.error('❌ Google login error:', error);
+                alert(`Error: ${error.message}\n\nCheck console (F12) for details`);
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        onError: (error) => {
+            console.error('❌ Google OAuth error:', error);
+            alert(`Google OAuth failed: ${JSON.stringify(error)}\n\nCheck console (F12) for details`);
+        },
+    });
+
     return (
         <div className="mx-auto grid w-[350px] gap-2">
-            {isSignIn ? <SignInForm /> : <SignUpForm onSuccess={onToggle} />}
-            <div className="text-center text-sm text-black">
+            {isSignIn ? <SignInForm /> : <SignUpForm />}
+            <div className="text-center text-sm">
                 {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
-                <Button variant="link" className="pl-1 text-black hover:text-gray-700" onClick={onToggle}>
+                <Button variant="link" className="pl-1 text-foreground" onClick={onToggle}>
                     {isSignIn ? "Sign up" : "Sign in"}
                 </Button>
             </div>
+            <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-gray-300 dark:after:border-gray-700">
+                <span className="relative z-10 bg-black px-4 text-gray-400">Or continue with</span>
+            </div>
+            <Button 
+                variant="outline" 
+                type="button" 
+                onClick={() => handleGoogleLogin()}
+                disabled={isLoading}
+            >
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google icon" className="mr-2 h-4 w-4" />
+                {isLoading ? 'Signing in...' : 'Continue with Google'}
+            </Button>
         </div>
     )
 }
@@ -330,8 +306,8 @@ interface AuthUIProps {
 
 const defaultSignInContent = {
     image: {
-        src: "/evnet.jpg",
-        alt: "A beautiful interior design for sign-in"
+        src: "https://images.unsplash.com/photo-1557683316-973673baf926?w=1200&q=80",
+        alt: "A beautiful gradient background for sign-in"
     },
     quote: {
         text: "Welcome Back! The journey continues.",
@@ -341,11 +317,11 @@ const defaultSignInContent = {
 
 const defaultSignUpContent = {
     image: {
-        src: "/evnet.jpg",
+        src: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&q=80",
         alt: "A vibrant, modern space for new beginnings"
     },
     quote: {
-        text: "Create an account to register in fests or host a fest.",
+        text: "Create an account. A new chapter awaits.",
         author: "GroupBy"
     }
 };
@@ -373,10 +349,7 @@ export function AuthUI({ signInContent = {}, signUpContent = {} }: AuthUIProps) 
           display: none;
         }
       `}</style>
-      <div className="flex h-screen items-center justify-center p-6 md:h-auto md:p-0 md:py-12 relative bg-white">
-        <Link href="/" className="absolute left-4 top-4 text-sm text-black/80 hover:text-black transition-colors">
-          ← Back home
-        </Link>
+      <div className="flex h-screen items-center justify-center p-6 md:h-auto md:p-0 md:py-12">
         <AuthFormContainer isSignIn={isSignIn} onToggle={toggleForm} />
       </div>
 
@@ -385,16 +358,17 @@ export function AuthUI({ signInContent = {}, signUpContent = {} }: AuthUIProps) 
         style={{ backgroundImage: `url(${currentContent.image.src})` }}
         key={currentContent.image.src}
       >
+
         <div className="absolute inset-x-0 bottom-0 h-[100px] bg-gradient-to-t from-background to-transparent" />
         
         <div className="relative z-10 flex h-full flex-col items-center justify-end p-2 pb-6">
             <blockquote className="space-y-2 text-center text-foreground">
               <p className="text-lg font-medium">
-                “<Typewriter
+                "<Typewriter
                     key={currentContent.quote.text}
                     text={currentContent.quote.text}
                     speed={60}
-                  />”
+                  />"
               </p>
               <cite className="block text-sm font-light text-muted-foreground not-italic">
                   — {currentContent.quote.author}
@@ -405,5 +379,3 @@ export function AuthUI({ signInContent = {}, signUpContent = {} }: AuthUIProps) 
     </div>
   );
 }
-
-export default AuthUI;

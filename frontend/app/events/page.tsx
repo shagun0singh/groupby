@@ -8,6 +8,7 @@ import { ProfileButton } from "@/components/ui/profile-button";
 import Pagination from "@/components/ui/pagination";
 import { Loader2, MapPin, Users, Calendar, Clock } from "lucide-react";
 import { getAuthToken, fetchEvents, type Event } from "@/lib/api";
+import FooterSection from "@/components/ui/footer";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -16,6 +17,7 @@ export default function EventsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [totalEvents, setTotalEvents] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,8 +26,14 @@ export default function EventsPage() {
 
   useEffect(() => {
     const token = getAuthToken();
-    setIsLoggedIn(!!token);
-  }, []);
+    if (!token) {
+      // If not logged in, redirect to landing page
+      router.push('/');
+    } else {
+      setIsLoggedIn(true);
+      setIsChecking(false);
+    }
+  }, [router]);
 
   useEffect(() => {
     async function loadEvents() {
@@ -71,50 +79,64 @@ export default function EventsPage() {
     router.push(`/events/${event.slug}`);
   };
 
+  // Show loading while checking authentication
+  if (isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen relative bg-white">
       
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
-        <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
-          GroupBy
-        </Link>
-        
-        <div className="flex-1 max-w-md mx-6">
-          <SuggestiveSearch
-            suggestions={[
-              "Search for workshops",
-              "Find meetups near you",
-              "Explore cooking classes",
-              "Discover photography walks"
-            ]}
-            effect="typewriter"
-            className="w-full"
-            onChange={setSearchTerm}
-          />
-        </div>
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-4 sm:px-6 md:px-8 py-4 md:py-5">
+          <Link href="/" className="text-2xl sm:text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
+            GroupBy
+          </Link>
+          
+          <div className="flex-1 w-full sm:w-auto max-w-md sm:mx-4 md:mx-6 order-3 sm:order-2">
+            <SuggestiveSearch
+              suggestions={[
+                "Search for workshops",
+                "Find meetups near you",
+                "Explore cooking classes",
+                "Discover photography walks"
+              ]}
+              effect="typewriter"
+              className="w-full"
+              onChange={setSearchTerm}
+            />
+          </div>
 
-        <div className="flex items-center gap-6">
-          <nav className="hidden md:flex gap-6 text-sm font-medium">
-            <Link href="/" className="text-gray-700 hover:text-black transition-colors">
-              Home
-            </Link>
-            <Link href="/events" className="text-black transition-colors">
-              Discover
-            </Link>
-            <Link href="/host" className="text-gray-700 hover:text-black transition-colors">
-              Host Event
-            </Link>
-            {!isLoggedIn && (
-              <Link href="/login" className="text-gray-700 hover:text-black transition-colors">
-                Login
+          <div className="flex items-center gap-4 sm:gap-6 order-2 sm:order-3">
+            <nav className="hidden md:flex gap-6 text-sm font-medium">
+              <Link href="/" className="text-gray-700 hover:text-black transition-colors">
+                Home
               </Link>
-            )}
-          </nav>
-          <ProfileButton />
+              <Link href="/events" className="text-black transition-colors">
+                Discover
+              </Link>
+              <Link href="/host" className="text-gray-700 hover:text-black transition-colors">
+                Host Event
+              </Link>
+              {!isLoggedIn && (
+                <Link href="/login" className="text-gray-700 hover:text-black transition-colors">
+                  Login
+                </Link>
+              )}
+            </nav>
+            <ProfileButton />
+          </div>
         </div>
       </header>
 
-      <main className="px-6 lg:px-16 py-12 relative z-10">
+      <main className="px-4 sm:px-6 lg:px-16 py-8 sm:py-12 relative z-10">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-12 h-12 animate-spin text-gray-600" />
@@ -216,6 +238,8 @@ export default function EventsPage() {
           </>
         )}
       </main>
+      
+      <FooterSection />
     </div>
   );
 }

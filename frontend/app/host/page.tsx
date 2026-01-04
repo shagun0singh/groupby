@@ -19,6 +19,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { API_BASE_URL, createEvent, deleteEvent, getAuthToken, getMyHostedEvents, updateEvent, type Event } from "@/lib/api";
+import FooterSection from "@/components/ui/footer";
 
 const EVENT_TYPES = ['Workshop', 'Meetup', 'Class', 'Social', 'Sports', 'Arts', 'Tech', 'Food', 'Other'];
 const CATEGORIES = ['Photography', 'Cooking', 'Fitness', 'Gaming', 'Music', 'Art', 'Tech', 'Book Club', 'Language', 'Dance', 'Other'];
@@ -30,6 +31,7 @@ export default function HostEventPage() {
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
   const [view, setView] = useState<"list" | "form">("list");
   const [myEvents, setMyEvents] = useState<Event[]>([]);
@@ -40,9 +42,12 @@ export default function HostEventPage() {
 
   useEffect(() => {
     const token = getAuthToken();
-    setIsLoggedIn(!!token);
     if (!token) {
-      router.push("/");
+      // If not logged in, redirect to landing page
+      router.push('/');
+    } else {
+      setIsLoggedIn(true);
+      setIsChecking(false);
     }
   }, [router]);
 
@@ -249,14 +254,26 @@ export default function HostEventPage() {
     }
   };
 
+  // Show loading while checking authentication
+  if (isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white text-black">
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-8 py-5">
-        <Link href="/" className="text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 flex justify-between items-center px-4 sm:px-6 md:px-8 py-4 md:py-5">
+        <Link href="/" className="text-2xl sm:text-3xl tracking-tight whitespace-nowrap text-black" style={{ fontFamily: 'var(--font-caveat-brush)' }}>
           GroupBy
         </Link>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-3 sm:gap-6">
           <nav className="hidden md:flex gap-6 text-sm font-medium">
             <Link href="/" className="text-gray-700 hover:text-black transition-colors">
               Home
@@ -277,20 +294,20 @@ export default function HostEventPage() {
         </div>
       </header>
 
-      <main className="container mx-auto px-6 py-12">
+      <main className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {view === "list" ? (
           <div className="max-w-5xl mx-auto">
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-4xl font-bold mb-2 text-black">Your Hosted Events</h1>
-                <p className="text-gray-600">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-black">Your Hosted Events</h1>
+                <p className="text-sm sm:text-base text-gray-600">
                   Manage your community gatherings and meetups
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setView("form")}
-                className="inline-flex items-center gap-2 rounded-lg bg-black px-5 py-3 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-black px-5 py-3 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Host New Event
@@ -444,12 +461,12 @@ export default function HostEventPage() {
           </div>
         ) : (
           <div className="max-w-3xl mx-auto">
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                <h1 className="text-4xl font-bold mb-2 text-black">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-black">
                   {editingEventId ? "Edit Event" : "Host an Event"}
                   </h1>
-                <p className="text-gray-600">
+                <p className="text-sm sm:text-base text-gray-600">
                   {editingEventId ? "Update your event details" : "Create a community gathering"}
             </p>
                 </div>
@@ -471,10 +488,10 @@ export default function HostEventPage() {
             </div>
           )}
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
               {/* Basic Information */}
             <section className="space-y-4">
-                <h2 className="text-2xl font-bold text-black mb-4">Basic Information</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-black mb-4">Basic Information</h2>
               
                 <Input
                   label="Event Title *"
@@ -485,7 +502,7 @@ export default function HostEventPage() {
                   size="large"
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-black mb-2">Event Type *</label>
                     <select
@@ -541,9 +558,9 @@ export default function HostEventPage() {
 
               {/* Date & Time */}
               <section className="space-y-4">
-                <h2 className="text-2xl font-bold text-black mb-4">When</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-black mb-4">When</h2>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   <Input
                     label="Date *"
                     type="date"
@@ -574,13 +591,13 @@ export default function HostEventPage() {
 
             {/* Location */}
             <section className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-black">Where</h2>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
+                  <h2 className="text-xl sm:text-2xl font-bold text-black">Where</h2>
                 <button
                   type="button"
                   onClick={getCurrentLocation}
                   disabled={isLoadingLocation}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black rounded-lg transition-colors disabled:opacity-50 text-sm font-medium"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black rounded-lg transition-colors disabled:opacity-50 text-sm font-medium"
                 >
                   <Navigation className={`w-4 h-4 ${isLoadingLocation ? 'animate-spin' : ''}`} />
                   {isLoadingLocation ? 'Getting Location...' : 'Use Current Location'}
@@ -596,7 +613,7 @@ export default function HostEventPage() {
                   size="large"
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input
                     label="City *"
                     placeholder="e.g., Mumbai"
@@ -618,7 +635,7 @@ export default function HostEventPage() {
 
               {/* Participants */}
             <section className="space-y-4">
-                <h2 className="text-2xl font-bold text-black mb-4">Participants</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-black mb-4">Participants</h2>
               
                 <Input
                   label="Maximum Participants *"
@@ -645,7 +662,7 @@ export default function HostEventPage() {
                   </label>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                     label="Minimum Age (optional)"
                     type="number"
@@ -667,7 +684,7 @@ export default function HostEventPage() {
 
               {/* Interests & Tags */}
             <section className="space-y-4">
-                <h2 className="text-2xl font-bold text-black mb-4">Interests & Tags</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-black mb-4">Interests & Tags</h2>
               
                 <div>
                   <label className="block text-sm font-medium text-black mb-2">Interests (help people find your event)</label>
@@ -715,7 +732,7 @@ export default function HostEventPage() {
 
             {/* Pricing */}
             <section className="space-y-4">
-                <h2 className="text-2xl font-bold text-black mb-4">Pricing</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-black mb-4">Pricing</h2>
               
                 <div>
                   <label className="block text-sm font-medium text-black mb-2">Price Type *</label>
@@ -746,21 +763,21 @@ export default function HostEventPage() {
                 )}
             </section>
 
-              <div className="flex gap-4 justify-end pt-6 border-t">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end pt-6 border-t">
               <button
                 type="button"
                 onClick={() => {
                   setView("list");
                     setEditingEventId(null);
                 }}
-                  className="px-6 py-3 rounded-lg border border-gray-300 text-sm font-medium text-black hover:bg-gray-50 transition-colors"
+                  className="w-full sm:w-auto px-6 py-3 rounded-lg border border-gray-300 text-sm font-medium text-black hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isLoading}
-                  className="px-6 py-3 rounded-lg bg-black text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full sm:w-auto px-6 py-3 rounded-lg bg-black text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isLoading
                     ? editingEventId ? "Saving..." : "Creating..."
@@ -771,6 +788,8 @@ export default function HostEventPage() {
         </div>
         )}
       </main>
+      
+      <FooterSection />
     </div>
   );
 }

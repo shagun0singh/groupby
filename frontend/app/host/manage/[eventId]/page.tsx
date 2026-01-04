@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ProfileButton } from "@/components/ui/profile-button";
 import { ArrowLeft, Check, X, Loader2, User, Mail, Clock, MessageSquare } from "lucide-react";
 import { getAuthToken, API_BASE_URL } from "@/lib/api";
+import FooterSection from "@/components/ui/footer";
 
 interface Participant {
   _id: string;
@@ -193,26 +194,27 @@ export default function ManageParticipantsPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <Link
               href="/host"
-              className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
+              className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors text-sm sm:text-base"
             >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Events
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+              <span className="hidden sm:inline">Back to Events</span>
+              <span className="sm:hidden">Back</span>
             </Link>
           </div>
           <ProfileButton />
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Event Info */}
         {event && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h1 className="text-3xl font-bold text-black mb-2">{event.title}</h1>
-            <p className="text-gray-600">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-6">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-black mb-2">{event.title}</h1>
+            <p className="text-sm sm:text-base text-gray-600">
               {new Date(event.date).toLocaleDateString("en-US", {
                 weekday: "long",
                 year: "numeric",
@@ -220,7 +222,7 @@ export default function ManageParticipantsPage() {
                 day: "numeric",
               })}
             </p>
-            <div className="mt-4 flex gap-6 text-sm">
+            <div className="mt-4 flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm">
               <div>
                 <span className="text-gray-500">Total Applicants:</span>{" "}
                 <span className="font-semibold">{participants.length}</span>
@@ -249,8 +251,8 @@ export default function ManageParticipantsPage() {
 
         {/* Pending Applications */}
         {pendingParticipants.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-black mb-4">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-black mb-4">
               Pending Applications ({pendingParticipants.length})
             </h2>
             <div className="space-y-4">
@@ -269,8 +271,8 @@ export default function ManageParticipantsPage() {
 
         {/* Approved Participants */}
         {approvedParticipants.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-black mb-4">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-black mb-4">
               Approved Participants ({approvedParticipants.length})
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -286,8 +288,8 @@ export default function ManageParticipantsPage() {
 
         {/* Rejected Applications */}
         {rejectedParticipants.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-500 mb-4">
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-500 mb-4">
               Rejected ({rejectedParticipants.length})
             </h2>
             <div className="space-y-3">
@@ -336,6 +338,8 @@ export default function ManageParticipantsPage() {
           </div>
         )}
       </main>
+      
+      <FooterSection />
     </div>
   );
 }
@@ -352,30 +356,30 @@ function ParticipantCard({
   isProcessing: boolean;
 }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border border-gray-200">
       <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
           {participant.user.profilePic ? (
             <img
               src={participant.user.profilePic}
               alt={participant.user.name}
-              className="w-16 h-16 rounded-full object-cover"
+              className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover flex-shrink-0"
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white text-2xl font-bold">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white text-lg sm:text-2xl font-bold flex-shrink-0">
               {participant.user.name.charAt(0)}
             </div>
           )}
-          <div>
-            <h3 className="text-lg font-semibold text-black">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base sm:text-lg font-semibold text-black truncate">
               {participant.user.name}
             </h3>
-            <p className="text-sm text-gray-600 flex items-center gap-1">
-              <Mail className="w-4 h-4" />
-              {participant.user.email}
+            <p className="text-xs sm:text-sm text-gray-600 flex items-center gap-1 truncate">
+              <Mail className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+              <span className="truncate">{participant.user.email}</span>
             </p>
             <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-              <Clock className="w-3 h-3" />
+              <Clock className="w-3 h-3 flex-shrink-0" />
               Applied {new Date(participant.appliedAt).toLocaleDateString()}
             </p>
           </div>
@@ -414,11 +418,11 @@ function ParticipantCard({
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
         <button
           onClick={onApprove}
           disabled={isProcessing}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isProcessing ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -432,7 +436,7 @@ function ParticipantCard({
         <button
           onClick={onReject}
           disabled={isProcessing}
-          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 sm:py-3 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isProcessing ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -450,25 +454,25 @@ function ParticipantCard({
 
 function ApprovedParticipantCard({ participant }: { participant: Participant }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 border border-green-200">
-      <div className="flex items-center gap-3 mb-3">
+    <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-green-200">
+      <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
         {participant.user.profilePic ? (
           <img
             src={participant.user.profilePic}
             alt={participant.user.name}
-            className="w-12 h-12 rounded-full object-cover"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
           />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-blue-400 flex items-center justify-center text-white text-lg font-bold">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-green-400 to-blue-400 flex items-center justify-center text-white text-base sm:text-lg font-bold flex-shrink-0">
             {participant.user.name.charAt(0)}
           </div>
         )}
-        <div className="flex-1">
-          <h4 className="font-semibold text-black">{participant.user.name}</h4>
-          <p className="text-xs text-gray-500">{participant.user.email}</p>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-semibold text-black text-sm sm:text-base truncate">{participant.user.name}</h4>
+          <p className="text-xs text-gray-500 truncate">{participant.user.email}</p>
         </div>
-        <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
-          <Check className="w-5 h-5 text-green-600" />
+        <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-full flex-shrink-0">
+          <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
         </div>
       </div>
       <p className="text-xs text-gray-500">

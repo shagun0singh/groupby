@@ -178,5 +178,68 @@ router.get('/me', authenticate, async (req, res) => {
   }
 });
 
+// Google OAuth Login/Signup
+router.post('/google', async (req, res) => {
+  try {
+    const { access_token } = req.body;
+
+    if (!access_token) {
+      return res.status(400).json({ message: 'Access token is required' });
+    }
+
+    // Fetch user info from Google using the access token
+    const userInfoResponse = await fetch(
+      `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
+    );
+
+    if (!userInfoResponse.ok) {
+      return res.status(401).json({ message: 'Invalid Google access token' });
+    }
+
+    const googleUser = await userInfoResponse.json();
+
+    // Check if user exists in database
+    let user = await User.findOne({ email: googleUser.email.toLowerCase() });
+
+    if (!user) {
+      // Create new user if doesn't exist
+      user = await User.create({
+        firstName: googleUser.given_name || googleUser.name?.split(' ')[0] || 'User',
+        lastName: googleUser.family_name || googleUser.name?.split(' ').slice(1).join(' ') || '',
+        email: googleUser.email.toLowerCase(),
+        phone: '+0000000000', // Placeholder phone number for Google sign-ups
+        password: Math.random().toString(36).slice(-16), // Random password (user won't use it)
+        role: 'user',
+        profilePic: googleUser.picture || '',
+        googleId: googleUser.sub, // Store Google ID for future reference
+      });
+      
+      console.log('✅ New user created via Google OAuth:', user.email);
+    } else {
+      console.log('✅ Existing user logged in via Google OAuth:', user.email);
+    }
+
+    // Generate JWT token
+    const token = generateToken(user._id);
+
+    res.json({
+      message: 'Google authentication successful',
+      token,
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        profilePic: user.profilePic,
+      }
+    });
+  } catch (error) {
+    console.error('❌ Google OAuth error:', error);
+    res.status(500).json({ message: 'Server error during Google authentication', error: error.message });
+  }
+});
+
 module.exports = router;
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Caveat_Brush, Audiowide } from "next/font/google";
+import { GoogleAuthProvider } from "@/components/providers/GoogleAuthProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -40,7 +41,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${interMono.variable} ${caveatBrush.variable} ${audiowide.variable} antialiased`}
       >
-        {children}
+        <GoogleAuthProvider>
+          {children}
+        </GoogleAuthProvider>
       </body>
     </html>
   );
