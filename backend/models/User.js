@@ -29,10 +29,17 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, 'Phone number is required'],
-      unique: true,
+      required: false, // Made optional for Google OAuth users
+      sparse: true, // Allows multiple null/empty values, but unique when present
       trim: true,
-      match: [/^\+?[0-9]{10,15}$/, 'Please provide a valid phone number']
+      validate: {
+        validator: function(v) {
+          // Allow empty for Google OAuth, but validate format if provided
+          if (!v || v === '') return true;
+          return /^\+?[0-9]{10,15}$/.test(v);
+        },
+        message: 'Please provide a valid phone number (10-15 digits)'
+      }
     },
     password: {
       type: String,

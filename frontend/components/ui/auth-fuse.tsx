@@ -200,14 +200,28 @@ function SignInForm() {
 function SignUpForm() {
   const handleSignUp = (event: React.FormEvent<HTMLFormElement>) => { event.preventDefault(); console.log("UI: Sign Up form submitted"); };
   return (
-    <form onSubmit={handleSignUp} autoComplete="on" className="flex flex-col gap-8">
+    <form onSubmit={handleSignUp} autoComplete="on" className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Create an account</h1>
-        <p className="text-balance text-sm text-muted-foreground">Enter your details below to sign up</p>
+        <p className="text-balance text-sm text-muted-foreground">Enter your details below to get started</p>
       </div>
       <div className="grid gap-4">
-        <div className="grid gap-1"><Label htmlFor="name">Full Name</Label><Input id="name" name="name" type="text" placeholder="John Doe" required autoComplete="name" /></div>
-        <div className="grid gap-2"><Label htmlFor="email">Email</Label><Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" /></div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="name">Full Name</Label>
+          <Input id="name" name="name" type="text" placeholder="John Doe" required autoComplete="name" />
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" name="email" type="email" placeholder="m@example.com" required autoComplete="email" />
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="phone">Phone Number</Label>
+          <Input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required autoComplete="tel" />
+        </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="city">City</Label>
+          <Input id="city" name="city" type="text" placeholder="e.g., Mumbai" required autoComplete="address-level2" />
+        </div>
         <PasswordInput name="password" label="Password" required autoComplete="new-password" placeholder="Password"/>
         <Button type="submit" variant="outline" className="mt-2">Sign Up</Button>
       </div>
@@ -243,8 +257,15 @@ function AuthFormContainer({ isSignIn, onToggle }: { isSignIn: boolean; onToggle
                     // Store the JWT token from your backend
                     localStorage.setItem('auth_token', data.token);
                     console.log('✅ Google login successful:', data);
-                    // Redirect to events page or dashboard
-                    window.location.href = '/events';
+                    
+                    // Check if user needs to complete profile
+                    if (data.isNewUser || !data.user?.phone || !data.user?.location?.city) {
+                        console.log('🔄 New user, redirecting to complete profile');
+                        window.location.href = '/complete-profile';
+                    } else {
+                        console.log('🔄 Existing user, redirecting to home');
+                        window.location.href = '/home';
+                    }
                 } else {
                     const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
                     console.error('❌ Backend authentication failed:', response.status, errorData);

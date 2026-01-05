@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ImagePlus, X } from "lucide-react";
+import { Check, ImagePlus, X, User, Mail, Phone, MapPin, FileText } from "lucide-react";
 
 function ProfileBg({ defaultImage }: { defaultImage?: string }) {
   const [hideDefault, setHideDefault] = useState(false);
@@ -194,87 +194,111 @@ export function ProfileDialog({ children }: { children: React.ReactNode }) {
           <div className="h-20 bg-gradient-to-br from-[#2D5BFF] to-[#4F46E5]"></div>
           <Avatar defaultImage="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop" />
           <div className="px-6 pb-6 pt-4">
-            <form className="space-y-4">
+            <form className="space-y-5">
               {isLoading ? (
-                <div className="text-gray-500 text-center py-4">Loading profile...</div>
+                <div className="text-slate-500 text-center py-4">Loading profile...</div>
               ) : (
                 <>
-                  <div className="space-y-2">
-                    <Label htmlFor={`${id}-full-name`} className="text-black">Full Name</Label>
-                    <input
-                      id={`${id}-full-name`}
-                      placeholder="Your full name"
-                      value={userData?.name || ''}
-                      type="text"
-                      disabled
-                      className="flex h-12 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
-                    />
+                  {/* Full Name */}
+                  <div>
+                    <Label htmlFor={`${id}-full-name`} className="text-slate-800 font-medium text-sm">Full Name</Label>
+                    <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 mt-1.5">
+                      <User className="w-4 h-4 text-slate-500" />
+                      <Input
+                        id={`${id}-full-name`}
+                        type="text"
+                        placeholder="Your full name"
+                        value={userData?.name || ''}
+                        disabled
+                        className="border-0 focus-visible:ring-0 focus-visible:outline-none shadow-none bg-transparent text-slate-800 placeholder:text-slate-400 disabled:opacity-60"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor={`${id}-email`} className="text-black">Email</Label>
-                    <input
-                      id={`${id}-email`}
-                      placeholder="john@example.com"
-                      value={userData?.email || ''}
-                      type="email"
-                      disabled
-                      className="flex h-12 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
-                    />
+
+                  {/* Email */}
+                  <div>
+                    <Label htmlFor={`${id}-email`} className="text-slate-800 font-medium text-sm">Email Address</Label>
+                    <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 mt-1.5">
+                      <Mail className="w-4 h-4 text-slate-500" />
+                      <Input
+                        id={`${id}-email`}
+                        type="email"
+                        placeholder="you@example.com"
+                        value={userData?.email || ''}
+                        disabled
+                        className="border-0 focus-visible:ring-0 focus-visible:outline-none shadow-none bg-transparent text-slate-800 placeholder:text-slate-400 disabled:opacity-60"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor={`${id}-phone`} className="text-black">Phone Number</Label>
-                    <input
-                      id={`${id}-phone`}
-                      placeholder="+91 98765 43210"
-                      value={userData?.phone || ''}
-                      type="tel"
-                      disabled
-                      className="flex h-12 w-full rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
-                    />
+
+                  {/* Phone Number */}
+                  <div>
+                    <Label htmlFor={`${id}-phone`} className="text-slate-800 font-medium text-sm">Phone Number</Label>
+                    <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2.5 bg-white mt-1.5 hover:border-blue-400 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-colors">
+                      <Phone className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                      <input
+                        id={`${id}-phone`}
+                        type="tel"
+                        placeholder="+91 98765 43210"
+                        defaultValue={userData?.phone || ''}
+                        className="flex-1 border-0 focus:ring-0 focus:outline-none bg-transparent text-slate-800 placeholder:text-slate-400 text-sm"
+                      />
+                    </div>
                   </div>
-              <div className="space-y-2">
-                <Label htmlFor={`${id}-location`} className="text-black">Location</Label>
-                <input
-                  id={`${id}-location`}
-                  placeholder="e.g., Mumbai, Maharashtra"
-                  value={userData?.location?.city ? `${userData.location.city}${userData.location.state ? ', ' + userData.location.state : ''}` : ''}
-                  type="text"
-                  className="flex h-12 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-black ring-offset-background placeholder:text-gray-400 focus-visible:outline-none focus-visible:border-black focus-visible:ring-1 focus-visible:ring-black"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`${id}-bio`} className="text-black">Biography</Label>
-                <Textarea
-                  id={`${id}-bio`}
-                  placeholder="Write a few sentences about yourself"
-                  value={bioValue}
-                  maxLength={maxLength}
-                  onChange={(e) => setBioValue(e.target.value)}
-                  aria-describedby={`${id}-description`}
-                  className="bg-white border border-gray-300 text-black"
-                />
-                <p
-                  id={`${id}-description`}
-                  className="mt-2 text-right text-xs text-gray-500"
-                  role="status"
-                  aria-live="polite"
-                >
-                  <span className="tabular-nums">{maxLength - bioValue.length}</span> characters left
-                </p>
-              </div>
-              {userData?.interests && userData.interests.length > 0 && (
-                <div className="space-y-2">
-                  <Label className="text-black">Your Interests</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {userData.interests.map((interest, i) => (
-                      <span key={i} className="text-xs px-3 py-1 bg-blue-50 text-blue-700 rounded-full">
-                        {interest}
-                      </span>
-                    ))}
+
+                  {/* Location */}
+                  <div>
+                    <Label htmlFor={`${id}-location`} className="text-slate-800 font-medium text-sm">Location</Label>
+                    <div className="flex items-center gap-2 border border-gray-200 rounded-lg px-3 py-2.5 bg-white mt-1.5 hover:border-blue-400 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-colors">
+                      <MapPin className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                      <input
+                        id={`${id}-location`}
+                        type="text"
+                        placeholder="e.g., Mumbai, Maharashtra"
+                        defaultValue={userData?.location?.city ? `${userData.location.city}${userData.location.state ? ', ' + userData.location.state : ''}` : ''}
+                        className="flex-1 border-0 focus:ring-0 focus:outline-none bg-transparent text-slate-800 placeholder:text-slate-400 text-sm"
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
-              </>
+
+                  {/* Biography */}
+                  <div>
+                    <Label htmlFor={`${id}-bio`} className="text-slate-800 font-medium text-sm">Biography</Label>
+                    <div className="mt-1.5">
+                      <Textarea
+                        id={`${id}-bio`}
+                        placeholder="Write a few sentences about yourself"
+                        value={bioValue}
+                        maxLength={maxLength}
+                        onChange={(e) => setBioValue(e.target.value)}
+                        aria-describedby={`${id}-description`}
+                        className="border border-gray-200 rounded-lg bg-white text-slate-800 placeholder:text-slate-400 min-h-[100px] resize-none hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-colors px-3 py-2"
+                      />
+                      <p
+                        id={`${id}-description`}
+                        className="mt-2 text-right text-xs text-slate-400"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        <span className="tabular-nums">{maxLength - bioValue.length}</span> characters left
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Interests */}
+                  {userData?.interests && userData.interests.length > 0 && (
+                    <div>
+                      <Label className="text-slate-800 font-medium text-sm">Your Interests</Label>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {userData.interests.map((interest, i) => (
+                          <span key={i} className="text-xs px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full font-medium">
+                            {interest}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </form>
           </div>
@@ -285,18 +309,20 @@ export function ProfileDialog({ children }: { children: React.ReactNode }) {
               type="button" 
               variant="outline" 
               onClick={handleLogout}
-              className="bg-red-600/10 border-red-600/30 text-red-500 hover:bg-red-600/20 hover:border-red-600/50"
+              className="bg-red-50 border-red-200 text-red-600 hover:bg-red-100 hover:border-red-300 rounded-xl font-medium shadow-sm"
             >
               Logout
             </Button>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <DialogClose asChild>
-                <Button type="button" variant="outline" className="bg-gray-50 border-gray-200 text-white hover:bg-white/10">
+                <Button type="button" variant="outline" className="bg-white border-gray-200 text-slate-700 hover:bg-gray-50 rounded-xl font-medium shadow-sm">
                   Cancel
                 </Button>
               </DialogClose>
               <DialogClose asChild>
-                <Button type="button" className="bg-blue-600 hover:bg-blue-700 text-white">Save changes</Button>
+                <Button type="button" className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium shadow-md">
+                  Save changes
+                </Button>
               </DialogClose>
             </div>
           </div>

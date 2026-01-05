@@ -200,6 +200,7 @@ router.post('/google', async (req, res) => {
 
     // Check if user exists in database
     let user = await User.findOne({ email: googleUser.email.toLowerCase() });
+    let isNewUser = false;
 
     if (!user) {
       // Create new user if doesn't exist
@@ -207,13 +208,14 @@ router.post('/google', async (req, res) => {
         firstName: googleUser.given_name || googleUser.name?.split(' ')[0] || 'User',
         lastName: googleUser.family_name || googleUser.name?.split(' ').slice(1).join(' ') || '',
         email: googleUser.email.toLowerCase(),
-        phone: '+0000000000', // Placeholder phone number for Google sign-ups
+        phone: '', // Will be collected in profile completion
         password: Math.random().toString(36).slice(-16), // Random password (user won't use it)
         role: 'user',
         profilePic: googleUser.picture || '',
         googleId: googleUser.sub, // Store Google ID for future reference
       });
       
+      isNewUser = true;
       console.log('✅ New user created via Google OAuth:', user.email);
     } else {
       console.log('✅ Existing user logged in via Google OAuth:', user.email);
@@ -225,6 +227,7 @@ router.post('/google', async (req, res) => {
     res.json({
       message: 'Google authentication successful',
       token,
+      isNewUser,
       user: {
         id: user._id,
         firstName: user.firstName,
@@ -233,11 +236,81 @@ router.post('/google', async (req, res) => {
         phone: user.phone,
         role: user.role,
         profilePic: user.profilePic,
+        location: user.location,
       }
     });
   } catch (error) {
     console.error('❌ Google OAuth error:', error);
     res.status(500).json({ message: 'Server error during Google authentication', error: error.message });
+  }
+});
+
+// Complete Profile (for Google OAuth users)
+router.post('/complete-profile', authenticate, async (req, res) => {
+  try {
+    const { phone, location } = req.body;
+
+    console.log('📝 Complete profile request:', { phone, location });
+
+    if (!phone || phone.trim() === '') {
+      return res.status(400).json({ message: 'Phone number is required' });
+    }
+
+    if (!location?.city || location.city.trim() === '') {
+      return res.status(400).json({ message: 'City is required' });
+    }
+
+    // Validate phone number format
+    const phoneRegex = /^\+?[0-9]{10,15}$/;
+    if (!phoneRegex.test(phone.trim())) {
+      return res.status(400).json({ message: 'Please provide a valid phone number (10-15 digits)' });
+    }
+
+    // Check if phone number is already taken by another user
+    const existingUser = await User.findOne({ 
+      phone: phone.trim(), 
+      _id: { $ne: req.user._id } 
+    });
+    
+    if (existingUser) {
+      return res.status(400).json({ message: 'Phone number is already registered' });
+    }
+
+    // Update user profile
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        phone: phone.trim(),
+        location: {
+          city: location.city.trim(),
+          state: location.state?.trim() || '',
+          country: location.country?.trim() || ''
+        }
+      },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.log('✅ Profile completed for user:', user.email);
+
+    res.json({
+      message: 'Profile completed successfully',
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        location: user.location,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('❌ Complete profile error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
